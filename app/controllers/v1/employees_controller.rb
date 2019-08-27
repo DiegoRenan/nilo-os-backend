@@ -40,7 +40,12 @@ module V1
 
     private
       def set_employee
-        @employee = Employee.find(params[:id])
+        if Employee.exists?(params[:id])
+          @employee = Employee.find(params[:id])
+        else
+          error = {:id=>["Não encontrado Funcionário com o id: #{params[:id]}"]}
+          render json: ErrorSerializer.serialize(error), status: :unprocessable_entity
+        end
       end
 
       # Only allow a trusted parameter "white list" through.
