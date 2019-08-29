@@ -1,4 +1,5 @@
 require 'rails_helper'
+require_relative '../../support/devise'
 
 class Hash 
   def json(parts)
@@ -17,9 +18,17 @@ describe V1::CompaniesController, type: :controller do
       get :index
       expect(response).to have_http_status(:not_acceptable)
     end
-    
-    it 'with accept header OK' do
+
+
+    it 'should not access without authorization' do
       request.accept = 'applicaton/vnd.api+json'
+      get :index
+      expect(response).to have_http_status(:unauthorized)
+    end
+    
+    it 'should access with header and authorization' do
+      user = create(:user)
+      sign_in user
       get :index
       expect(response).to have_http_status(:ok)
     end
@@ -101,7 +110,5 @@ describe V1::CompaniesController, type: :controller do
     end
 
   end
-
-  
 
 end

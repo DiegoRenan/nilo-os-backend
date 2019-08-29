@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: users
@@ -43,13 +41,10 @@
 #  fk_rails_...  (employee_id => employees.id)
 #
 
-
-class User < ActiveRecord::Base
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable and :omniauthable
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable
-  include DeviseTokenAuth::Concerns::User
-
-  belongs_to :employee
+FactoryBot.define do
+  factory :user do
+    email { Faker::Internet.email }
+    password { "123456" } 
+    password_confirmation { "123456" }
+  end
 end

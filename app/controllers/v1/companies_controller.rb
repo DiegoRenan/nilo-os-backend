@@ -1,7 +1,7 @@
 module V1
   class CompaniesController < ApplicationController
     before_action :set_company, only: [:show, :update, :destroy]
-    #before_action :authenticate_user!
+    # before_action :authenticate_user!
   
     # GET v1/companies
     def index
@@ -37,7 +37,7 @@ module V1
   
     # DELETE v1/companies/1
     def destroy
-      if @company.tickets.exists? 
+      if @company.tickets.exists? || @company.employees.exists?
         render json: ErrorSerializer.serialize(@company.errors), status: :conflict
       else
         @company.destroy
@@ -47,8 +47,14 @@ module V1
     private
       # Use callbacks to share common setup or constraints between actions.
       def set_company
+        
         if params[:ticket_id]
           @company = Ticket.find(params[:ticket_id]).company
+          return @company
+        end
+
+        if params[:employee_id]
+          @company = Employee.find(params[:employee_id]).company
           return @company
         end
         

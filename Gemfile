@@ -49,9 +49,10 @@ group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   # A library for generating fake data such as names, addresses, and phone numbers.
+  gem 'capybara'
+  gem 'rspec-rails', '~> 3.6'
+  gem 'factory_bot_rails', '~> 4.0'
   gem 'faker'
-  # RSpec for Rails-3+ http://relishapp.com/rspec/rspec-rails
-  gem 'rspec-rails', '~> 3.8'
 end
 
 group :development do
@@ -61,6 +62,7 @@ group :development do
   gem 'spring-watcher-listen', '~> 2.0.0'
   # Annotate Rails classes with schema and routes info
   gem 'annotate'
+  gem 'spring-commands-rspec'
 end
 
 

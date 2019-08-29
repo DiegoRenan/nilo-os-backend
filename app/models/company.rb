@@ -11,6 +11,7 @@
 class Company < ApplicationRecord
   #Associations
   has_many :tickets
+  has_many :employees
   
   #before actions
   before_save { self.name = name.upcase }
