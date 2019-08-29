@@ -1,6 +1,7 @@
 module V1
   class EmployeesController < ApplicationController
-    before_action :set_employee, only: [:show, :update, :destroy]
+    before_action :set_employee, only: [:update, :destroy]
+    before_action :set_employees, only: [:show]
 
     # GET v1/employees
     def index
@@ -11,7 +12,7 @@ module V1
 
     # GET v1/employee/:id
     def show
-      render json: @employee
+      render json: @employees
     end
 
     # POST v1/employees
@@ -46,6 +47,14 @@ module V1
           error = {:id=>["Não encontrado Funcionário com o id: #{params[:id]}"]}
           render json: ErrorSerializer.serialize(error), status: :unprocessable_entity
         end
+      end
+
+      def set_employees
+        if params[:company_id]
+          @employees = Company.find(params[:company_id]).employees
+          return @employees
+        end
+        @employees = Employee.where(id: params[:id])
       end
 
       # Only allow a trusted parameter "white list" through.

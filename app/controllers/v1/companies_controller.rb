@@ -47,8 +47,14 @@ module V1
     private
       # Use callbacks to share common setup or constraints between actions.
       def set_company
+        
         if params[:ticket_id]
           @company = Ticket.find(params[:ticket_id]).company
+          return @company
+        end
+
+        if params[:employee_id]
+          @company = Employee.find(params[:employee_id]).company
           return @company
         end
         

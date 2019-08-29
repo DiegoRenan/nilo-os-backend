@@ -29,6 +29,8 @@
 class Employee < ApplicationRecord
   #associations
   belongs_to :company
+  has_one :user
+
   #validations
   validates :name, presence: true, length: { maximum: 100 }
   validates :email, presence: true, length: { maximum: 255 }

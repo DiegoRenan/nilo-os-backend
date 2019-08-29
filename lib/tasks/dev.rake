@@ -47,6 +47,23 @@ namespace :dev do
 
     ###############################################33
 
+    puts "Cadastrando User para Employees"
+
+    employees = Employee.all
+
+    employees.each do |employee|
+      User.create!(
+        email: employee.email,
+        password: "123456", 
+        password_confirmation: "123456",
+        employee: employee
+      )
+    end
+    
+    puts "Users cadastrados com sucesso!"
+
+    #################################################
+
     puts "Cadastrando Tickets..."
 
     100.times do |i|
