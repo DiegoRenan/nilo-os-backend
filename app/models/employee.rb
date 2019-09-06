@@ -29,7 +29,7 @@
 class Employee < ApplicationRecord
   #associations
   belongs_to :company
-  has_one :user
+  has_one :user, dependent: :destroy
 
   #validations
   validates :name, presence: true, length: { maximum: 100 }
