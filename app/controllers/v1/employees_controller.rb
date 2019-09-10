@@ -20,7 +20,16 @@ module V1
       @employee = Employee.new(employee_params)
 
       if @employee.save
-        render json: @employee, status: :created
+        
+        user = @employee.create_user!(email: @employee.email, password: params[:password], password_confirmation: params[:password_confirmation])
+        
+        if !user.valid?
+          @employee.errors.add(id: "Login", title: "Não foi possivel cadastrar a senha do usuário: #{@employee.name}")
+          render json: ErrorSerializer.serialize(@employee.errors), status: :unprocessable_entity
+        end
+        
+        render json: @employee, status: :created, location: @employees
+
       else
         render json: ErrorSerializer.serialize(@employee.errors), status: :unprocessable_entity
       end

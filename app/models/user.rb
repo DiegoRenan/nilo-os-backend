@@ -52,4 +52,7 @@ class User < ActiveRecord::Base
   include DeviseTokenAuth::Concerns::User
 
   belongs_to :employee
+
+  #validations
+  validates :email, presence: true, uniqueness: true
 end

@@ -31,9 +31,21 @@ class Employee < ApplicationRecord
   belongs_to :company
   has_one :user, dependent: :destroy
 
+  #before save
+  before_save { self.email = email.downcase }
+
+  #regex
+  VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
+
   #validations
+  validates :password, presence: true
+  validates :password_confirmation, presence: true
   validates :name, presence: true, length: { maximum: 100 }
-  validates :email, presence: true, length: { maximum: 255 }
-  validates :cpf, presence: true, length: { is: 11 }
+  validates :email, presence: true, length: { maximum: 255 },
+                                    format: { with: VALID_EMAIL_REGEX },
+                                    uniqueness: { case_sensitive: false }
+  validates :cpf, presence: true, length: { is: 11 },
+                                  uniqueness: true
   validates :cep, length: { is: 8 }, allow_blank: true
+
 end
