@@ -18,21 +18,30 @@ module V1
     # POST v1/employees
     def create
       @employee = Employee.new(employee_params)
-
+      
       if @employee.save
         
-        user = @employee.create_user!(email: @employee.email, password: params[:password], password_confirmation: params[:password_confirmation])
+        if !params[:data][:attributes][:password].nil? && !params[:data][:attributes][:password_confirmation].nil?
+          password = params[:data][:attributes][:password]
+          password_confirmation = params[:data][:attributes][:password_confirmation]
+          
+          user = @employee.create_user!(email: @employee.email, password: password, password_confirmation: password_confirmation)
+
+          if !user.valid?
+            puts "User INVALID"
+            @employee.erros.add({:password =>["Não foi possível criar um login. Verifique as informações dadas"]})
+          end
         
-        if !user.valid?
-          @employee.errors.add(id: "Login", title: "Não foi possivel cadastrar a senha do usuário: #{@employee.name}")
-          render json: ErrorSerializer.serialize(@employee.errors), status: :unprocessable_entity
+          render json: @employee, status: :created
+        else
+          error = {:password=>["Usário #{@employee.name} criado sem Login"]}
+          render json: ErrorSerializer.serialize(error), status: :unprocessable_entity
         end
-        
-        render json: @employee, status: :created, location: @employees
 
       else
         render json: ErrorSerializer.serialize(@employee.errors), status: :unprocessable_entity
       end
+
     end
 
     # PATCH/PUT v1/companies/1
