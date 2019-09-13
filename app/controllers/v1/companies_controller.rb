@@ -38,6 +38,7 @@ module V1
     # DELETE v1/companies/1
     def destroy
       if @company.tickets.exists? || @company.employees.exists?
+        @company.errors.add('Empresa', 'Possuí Tickets vinculados', message: "Delete todos os Tickets da Empresa antes de prosseguir")
         render json: ErrorSerializer.serialize(@company.errors), status: :conflict
       else
         @company.destroy
