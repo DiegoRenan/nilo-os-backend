@@ -1,7 +1,7 @@
 module V1
   class CompaniesController < ApplicationController
     before_action :set_company, only: [:show, :update, :destroy]
-    # before_action :authenticate_user!
+    before_action :authenticate_user!
   
     # GET v1/companies
     def index
