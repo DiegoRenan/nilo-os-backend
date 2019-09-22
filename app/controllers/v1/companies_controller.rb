@@ -1,7 +1,7 @@
 module V1
   class CompaniesController < ApplicationController
     before_action :set_company, only: [:show, :update, :destroy]
-    # before_action :authenticate_user!
+    before_action :authenticate_user!
   
     # GET v1/companies
     def index
@@ -38,6 +38,7 @@ module V1
     # DELETE v1/companies/1
     def destroy
       if @company.tickets.exists? || @company.employees.exists?
+        @company.errors.add('Empresa', 'Possuí Tickets vinculados', message: "Delete todos os Tickets da Empresa antes de prosseguir")
         render json: ErrorSerializer.serialize(@company.errors), status: :conflict
       else
         @company.destroy

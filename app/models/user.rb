@@ -34,7 +34,7 @@
 #
 #  index_users_on_confirmation_token    (confirmation_token) UNIQUE
 #  index_users_on_email                 (email) UNIQUE
-#  index_users_on_employee_id           (employee_id)
+#  index_users_on_employee_id           (employee_id) UNIQUE
 #  index_users_on_reset_password_token  (reset_password_token) UNIQUE
 #  index_users_on_uid_and_provider      (uid,provider) UNIQUE
 #
@@ -52,4 +52,7 @@ class User < ActiveRecord::Base
   include DeviseTokenAuth::Concerns::User
 
   belongs_to :employee
+
+  #validations
+  validates :email, presence: true, uniqueness: true
 end

@@ -77,7 +77,7 @@ ActiveRecord::Schema.define(version: 2019_08_29_142242) do
     t.uuid "employee_id"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["employee_id"], name: "index_users_on_employee_id"
+    t.index ["employee_id"], name: "index_users_on_employee_id", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end

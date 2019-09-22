@@ -2,7 +2,8 @@ module V1
   class EmployeesController < ApplicationController
     before_action :set_employee, only: [:update, :destroy]
     before_action :set_employees, only: [:show]
-
+    before_action :authenticate_user!
+    
     # GET v1/employees
     def index
       @employees = Employee.all 
@@ -18,12 +19,30 @@ module V1
     # POST v1/employees
     def create
       @employee = Employee.new(employee_params)
-
+      
       if @employee.save
-        render json: @employee, status: :created
+        
+        if !params[:data][:attributes][:password].nil? && !params[:data][:attributes][:password_confirmation].nil?
+          password = params[:data][:attributes][:password]
+          password_confirmation = params[:data][:attributes][:password_confirmation]
+          
+          user = @employee.create_user!(email: @employee.email, password: password, password_confirmation: password_confirmation)
+
+          if !user.valid?
+            puts "User INVALID"
+            @employee.erros.add({:password =>["Não foi possível criar um login. Verifique as informações dadas"]})
+          end
+        
+          render json: @employee, status: :created
+        else
+          error = {:password=>["Usário #{@employee.name} criado sem Login"]}
+          render json: ErrorSerializer.serialize(error), status: :unprocessable_entity
+        end
+
       else
         render json: ErrorSerializer.serialize(@employee.errors), status: :unprocessable_entity
       end
+
     end
 
     # PATCH/PUT v1/companies/1
