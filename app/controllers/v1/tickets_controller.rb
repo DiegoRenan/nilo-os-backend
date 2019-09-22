@@ -2,7 +2,7 @@ module V1
   class TicketsController < ApplicationController
     before_action :set_ticket, only: [:destroy]
     before_action :set_ticket_company, only: [:show, :update]
-    # before_action :authenticate_user!
+    before_action :authenticate_user!
   
     # GET /tickets
     def index

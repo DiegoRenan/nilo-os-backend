@@ -2,7 +2,8 @@ module V1
   class EmployeesController < ApplicationController
     before_action :set_employee, only: [:update, :destroy]
     before_action :set_employees, only: [:show]
-
+    before_action :authenticate_user!
+    
     # GET v1/employees
     def index
       @employees = Employee.all 
