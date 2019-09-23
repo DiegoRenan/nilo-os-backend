@@ -9,7 +9,12 @@ class Hash
   end
 end
 
+
 RSpec.describe V1::EmployeesController, type: :controller do
+
+  before(:each) do
+    @current_user = create(:user)
+  end
 
   context 'GET v1/employees' do
     
@@ -18,7 +23,9 @@ RSpec.describe V1::EmployeesController, type: :controller do
       expect(response).to have_http_status(:not_acceptable)
     end
     
-    it 'should access with header' do
+    it 'should access with headers and auth' do
+      request.accept = 'applicaton/vnd.api+json'
+      request.headers.merge! @current_user.create_new_auth_token
       request.accept = 'applicaton/vnd.api+json'
       get :index
       expect(response).to have_http_status(:ok)
@@ -29,11 +36,13 @@ RSpec.describe V1::EmployeesController, type: :controller do
   context 'GET v1/employee/:id' do
 
     it 'should return an id' do
+      request.accept = 'applicaton/vnd.api+json'
+      request.headers.merge! @current_user.create_new_auth_token
       employee = create(:employee)
       request.accept = 'applicaton/vnd.api+json'
       get :show, params: {id: employee.id}
       response_body = JSON.parse(response.body)
-      expect(response_body.json("data > id")).to eq(employee.id)
+      expect(response_body['data'][0]['id']).to eq(employee.id)
     end
 
   end
@@ -41,6 +50,8 @@ RSpec.describe V1::EmployeesController, type: :controller do
   context 'POST v1/employee' do
 
     it 'should create a employee' do
+      request.accept = 'applicaton/vnd.api+json'
+      request.headers.merge! @current_user.create_new_auth_token
       request.accept = 'application/vnd.api+json'
       company = create(:company)
       
@@ -74,6 +85,8 @@ RSpec.describe V1::EmployeesController, type: :controller do
   context 'PUT v1/employees/:id' do
     
     it 'should update a company name' do
+      request.accept = 'applicaton/vnd.api+json'
+      request.headers.merge! @current_user.create_new_auth_token
       request.accept = 'application/vnd.api+json'
       employee = create(:employee)
 
@@ -96,6 +109,8 @@ RSpec.describe V1::EmployeesController, type: :controller do
   context 'DELETE v1/employees/:id' do
     
     it 'to delete' do
+      request.accept = 'applicaton/vnd.api+json'
+      request.headers.merge! @current_user.create_new_auth_token
       request.accept = 'application/vnd.api+json'
       employee = create(:employee)
       expect {

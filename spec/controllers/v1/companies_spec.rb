@@ -1,5 +1,4 @@
 require 'rails_helper'
-require_relative '../../support/devise'
 
 class Hash 
   def json(parts)
@@ -11,6 +10,10 @@ class Hash
 end
 
 describe V1::CompaniesController, type: :controller do
+
+  before(:each) do
+    @current_user = create(:user)
+  end
   
   context 'request index' do
     
@@ -27,8 +30,8 @@ describe V1::CompaniesController, type: :controller do
     end
     
     it 'should access with header and authorization' do
-      user = create(:user)
-      sign_in user
+      request.accept = 'applicaton/vnd.api+json'
+      request.headers.merge! @current_user.create_new_auth_token
       get :index
       expect(response).to have_http_status(:ok)
     end
@@ -38,6 +41,8 @@ describe V1::CompaniesController, type: :controller do
   context 'GET v1/companies/:id' do
 
     it 'should return an id' do
+      request.accept = 'applicaton/vnd.api+json'
+      request.headers.merge! @current_user.create_new_auth_token
       company = Company.first
       request.accept = 'applicaton/vnd.api+json'
       get :show, params: {id: company.id}
@@ -50,6 +55,8 @@ describe V1::CompaniesController, type: :controller do
   context 'POST v1/company' do
 
     it 'should create a company' do
+      request.accept = 'applicaton/vnd.api+json'
+      request.headers.merge! @current_user.create_new_auth_token
       company = {
         "data": {
           "type": "companies",
@@ -71,6 +78,8 @@ describe V1::CompaniesController, type: :controller do
   context 'PUT v1/companies/:id' do
     
     it 'should update a company name' do
+      request.accept = 'applicaton/vnd.api+json'
+      request.headers.merge! @current_user.create_new_auth_token
       company = Company.first
       params = {
         "id": company.id,
@@ -92,6 +101,8 @@ describe V1::CompaniesController, type: :controller do
   context 'DELETE v1/company/:id' do
     
     it 'should delete a company without tickets' do 
+      request.accept = 'applicaton/vnd.api+json'
+      request.headers.merge! @current_user.create_new_auth_token
       company = Company.create(name: 'Company Without Tickets')
       request.accept = 'application/vnd.api+json'
       delete :destroy, params: {id: company.id}
@@ -100,7 +111,9 @@ describe V1::CompaniesController, type: :controller do
       expect(Company.exists?(company.id)).to be_falsey
     end
 
-    it 'should not delete a company with tickets' do 
+    it 'should not delete a company with tickets' do
+      request.accept = 'applicaton/vnd.api+json'
+      request.headers.merge! @current_user.create_new_auth_token 
       company = Company.first
       request.accept = 'application/vnd.api+json'
       delete :destroy, params: {id: company.id}
@@ -110,5 +123,10 @@ describe V1::CompaniesController, type: :controller do
     end
 
   end
+
+  # def login
+  #   request.accept = 'application/json'
+  #   post '/auth/sign_in', params:  { email: @current_user.email, password: @current_user.password }
+  # end
 
 end
