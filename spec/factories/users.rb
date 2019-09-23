@@ -15,6 +15,7 @@
 #  image                  :string
 #  last_sign_in_at        :datetime
 #  last_sign_in_ip        :string
+#  master                 :boolean          default(FALSE)
 #  name                   :string
 #  nickname               :string
 #  provider               :string           default("email"), not null
@@ -22,6 +23,7 @@
 #  reset_password_sent_at :datetime
 #  reset_password_token   :string
 #  sign_in_count          :integer          default(0)
+#  tec                    :boolean          default(TRUE)
 #  tokens                 :json
 #  uid                    :string           default(""), not null
 #  unconfirmed_email      :string

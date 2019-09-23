@@ -19,17 +19,17 @@ module V1
     # POST v1/employees
     def create
       @employee = Employee.new(employee_params)
-      
+
       if @employee.save
         
         if !params[:data][:attributes][:password].nil? && !params[:data][:attributes][:password_confirmation].nil?
           password = params[:data][:attributes][:password]
           password_confirmation = params[:data][:attributes][:password_confirmation]
+          master = params[:data][:attributes][:master]
           
-          user = @employee.create_user!(email: @employee.email, password: password, password_confirmation: password_confirmation)
+          user = @employee.create_user!(email: @employee.email, password: password, password_confirmation: password_confirmation, master: master)
 
           if !user.valid?
-            puts "User INVALID"
             @employee.erros.add({:password =>["Não foi possível criar um login. Verifique as informações dadas"]})
           end
         
