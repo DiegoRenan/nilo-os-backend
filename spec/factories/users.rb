@@ -3,6 +3,7 @@
 # Table name: users
 #
 #  id                     :bigint           not null, primary key
+#  admin                  :boolean          default(FALSE)
 #  allow_password_change  :boolean          default(FALSE)
 #  confirmation_sent_at   :datetime
 #  confirmation_token     :string
