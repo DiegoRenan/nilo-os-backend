@@ -7,7 +7,7 @@ class ApplicationController < ActionController::API
   protected
 
     def configure_permitted_parameters
-      devise_parameter_sanitizer.permit(:sign_up, keys: [:employee_id, :master])
+      devise_parameter_sanitizer.permit(:sign_up, keys: [:employee_id, :master, :tec])
     end
 
     # Return only if client accepts Mime Type vnd.api+json results
