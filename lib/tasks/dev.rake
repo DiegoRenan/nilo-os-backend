@@ -13,15 +13,30 @@ namespace :dev do
 
     companies = %w(Geral Matriz Shopping Posto Atacadão)
 
-    companies.each do |company|
-      Company.create!(
-        name: company
-      )
+    ActiveRecord::Base.transaction do
+      companies.each do |company|
+        Company.create!(
+          name: company
+        )
+      end
     end
 
     puts "Companies cadastradas com sucesso!"
 
     ###############################################33
+
+    puts "Cadastrando Departments..."
+
+    100.times do |i|
+      Department.create!(
+        name: Faker::Commerce.department(max: 2, fixed_amount: true),
+        company_id: Company.all.sample.id
+      )
+    end  
+
+    puts "Departaments cadastrados"
+
+    #################################################
 
     puts "Cadastrando Employees"
 

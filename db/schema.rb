@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_23_134528) do
+ActiveRecord::Schema.define(version: 2019_09_24_032344) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -21,6 +21,14 @@ ActiveRecord::Schema.define(version: 2019_09_23_134528) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "departments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name"
+    t.uuid "company_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_departments_on_company_id"
   end
 
   create_table "employees", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -37,7 +45,9 @@ ActiveRecord::Schema.define(version: 2019_09_23_134528) do
     t.uuid "company_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "department_id"
     t.index ["company_id"], name: "index_employees_on_company_id"
+    t.index ["department_id"], name: "index_employees_on_department_id"
   end
 
   create_table "tickets", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -47,7 +57,9 @@ ActiveRecord::Schema.define(version: 2019_09_23_134528) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "company_id"
+    t.uuid "department_id"
     t.index ["company_id"], name: "index_tickets_on_company_id"
+    t.index ["department_id"], name: "index_tickets_on_department_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -85,6 +97,9 @@ ActiveRecord::Schema.define(version: 2019_09_23_134528) do
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end
 
+  add_foreign_key "departments", "companies"
   add_foreign_key "employees", "companies"
+  add_foreign_key "employees", "departments"
+  add_foreign_key "tickets", "departments"
   add_foreign_key "users", "employees"
 end

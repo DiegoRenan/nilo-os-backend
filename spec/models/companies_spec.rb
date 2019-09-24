@@ -45,4 +45,10 @@ describe V1::Company, type: :model do
     end
 
   end
+
+  it 'should be saved in UPCASE' do
+    company = create(:company, name: 'company')
+    expect(company.name).to eq('COMPANY')
+  end
+
 end

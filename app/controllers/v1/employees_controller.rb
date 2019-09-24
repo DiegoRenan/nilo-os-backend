@@ -88,7 +88,8 @@ module V1
                                                                               :city,
                                                                               :uf,
                                                                               :cep,
-                                                                              :company_id])
+                                                                              :company_id,
+                                                                              :department_id])
       end
 
   end  

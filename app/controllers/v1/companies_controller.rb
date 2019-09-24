@@ -58,6 +58,11 @@ module V1
           @company = Employee.find(params[:employee_id]).company
           return @company
         end
+
+        if params[:department_id]
+          @company = Department.find(params[:department_id]).company
+          return @company
+        end
         
         if Company.exists?(params[:id])
           @company = Company.find(params[:id])
