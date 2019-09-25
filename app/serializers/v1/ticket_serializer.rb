@@ -3,10 +3,7 @@ module V1
     attributes :id, :title, :body, :conclude_at
   
     #Associations
-    belongs_to :company do
-      #HATEOAS 
-      link(:related) { v1_ticket_company_url(object.id) }
-    end
+    belongs_to :company
   
     #HATEOAS
     link(:self) { v1_ticket_url(object.id) }

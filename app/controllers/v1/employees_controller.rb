@@ -13,7 +13,7 @@ module V1
 
     # GET v1/employee/:id
     def show
-      render json: @employees
+      render json: @employees, include: [:company, :department]
     end
 
     # POST v1/employees
@@ -30,13 +30,13 @@ module V1
           user = @employee.create_user!(email: @employee.email, password: password, password_confirmation: password_confirmation, master: master)
 
           if !user.valid?
-            @employee.erros.add({:password =>["Não foi possível criar um login. Verifique as informações dadas"]})
+            @employee.errors.add({:password =>["Não foi possível criar um login. Verifique as informações dadas"]})
           end
         
           render json: @employee, status: :created
         else
-          error = {:password=>["Usário #{@employee.name} criado sem Login"]}
-          render json: ErrorSerializer.serialize(error), status: :unprocessable_entity
+          @employee.errors.add('Usuário', 'Criada sem login')
+          render json: ErrorSerializer.serialize(@employee.errors), status: :unprocessable_entity
         end
 
       else

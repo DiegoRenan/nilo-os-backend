@@ -4,30 +4,21 @@ Rails.application.routes.draw do
   
   api_version(:module => "V1", :path => {:value => "v1"}) do
     resources :companies do
-      
       resource :employees, only: [:show]
-      resource :employees, only: [:show], path: 'relationships/employees'
-
       resource :tickets, only: [:show]
-      resource :tickets, only: [:show], path: 'relationships/tickets'
-      
       resource :departments, only: [:show]
-      resource :departments, only: [:show], path: 'relationships/departments'
     end
 
     resources :tickets do
       resource :company, only: [:show]
-      resource :company, only: [:show], path: 'relationships/company'
     end
 
     resources :employees do 
       resource :company, only: [:show]
-      resource :company, only: [:show], path: 'relationships/company'
     end
 
     resources :departments do 
       resource :company, only: [:show]
-      resource :company, only: [:show], path: 'relationships/company'
     end
 
   end
