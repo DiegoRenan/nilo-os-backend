@@ -12,7 +12,7 @@ module V1
   
     # GET v1/companies/1
     def show
-      render json: @company
+      render json: @company, include: [:departments]
     end
   
     # POST v1/companies
