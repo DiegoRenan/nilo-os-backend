@@ -13,7 +13,7 @@ module V1
 
     # GET v1/employee/:id
     def show
-      render json: @employees, include: [:company, :department]
+      render json: @employees, include: [:company, :department, :sector]
     end
 
     # POST v1/employees
@@ -89,7 +89,8 @@ module V1
                                                                               :uf,
                                                                               :cep,
                                                                               :company_id,
-                                                                              :department_id])
+                                                                              :department_id,
+                                                                              :sector_id])
       end
 
   end  

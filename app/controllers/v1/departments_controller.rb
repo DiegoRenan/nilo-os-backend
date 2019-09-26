@@ -13,7 +13,7 @@ module V1
 
     #GET v1/departments/:id
     def show
-      render json: @departments
+      render json: @departments, include: [:sectors]
     end
 
     # POST v1/departments

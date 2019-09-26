@@ -59,7 +59,12 @@ module V1
       # Only allow a trusted parameter "white list" through.
       def ticket_params
         ActiveModelSerializers::Deserialization
-          .jsonapi_parse(params, only: [:title, :body, :conclude_at, :company_id, :department_id])
+          .jsonapi_parse(params, only: [:title, 
+                                        :body, 
+                                        :conclude_at, 
+                                        :company_id, 
+                                        :department_id,
+                                        :sector_id])
       end
   end    
 end

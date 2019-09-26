@@ -17,16 +17,19 @@
 #  updated_at    :datetime         not null
 #  company_id    :uuid
 #  department_id :uuid
+#  sector_id     :uuid
 #
 # Indexes
 #
 #  index_employees_on_company_id     (company_id)
 #  index_employees_on_department_id  (department_id)
+#  index_employees_on_sector_id      (sector_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (company_id => companies.id)
 #  fk_rails_...  (department_id => departments.id)
+#  fk_rails_...  (sector_id => sectors.id)
 #
 
 require 'rails_helper'

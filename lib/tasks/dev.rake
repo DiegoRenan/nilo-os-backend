@@ -38,6 +38,19 @@ namespace :dev do
 
     #################################################
 
+    puts "Cadastrando Sectors.."
+
+    100.times do |i|
+      Sector.create!(
+        name: Faker::Commerce.department(max: 1, fixed_amount: true),
+        department_id: Department.all.sample.id
+      )
+    end  
+
+    puts "Departaments cadastrados"
+
+    #################################################
+
     puts "Cadastrando Employees"
 
     Company.all.each do |company|
@@ -53,7 +66,8 @@ namespace :dev do
           city: Faker::Address.city,
           uf: Faker::Address.state_abbr,
           cep: Faker::Number.number(digits: 8),
-          company_id: company.id
+          company_id: company.id,
+          sector_id: Sector.all.sample.id
         )
       end
     end

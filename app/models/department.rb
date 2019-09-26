@@ -22,6 +22,7 @@ class Department < ApplicationRecord
 
   has_many :employees
   has_many :tickets
+  has_many :sectors
 
   #before actions
   before_save { self.name = name.upcase }

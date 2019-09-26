@@ -3,4 +3,5 @@ class EmployeeSerializer < ActiveModel::Serializer
   
   belongs_to :company
   belongs_to :department
+  belongs_to :sector
 end

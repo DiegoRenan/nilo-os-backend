@@ -19,7 +19,12 @@ Rails.application.routes.draw do
 
     resources :departments do 
       resource :company, only: [:show]
+      resource :sectors, only: [:show]
     end
 
+    resources :sectors do
+      resource :department, only: [:show]
+    end
+    
   end
 end
