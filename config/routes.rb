@@ -25,6 +25,8 @@ Rails.application.routes.draw do
     resources :sectors do
       resource :department, only: [:show]
     end
+
+    resources :ticket_statuses
     
   end
 end

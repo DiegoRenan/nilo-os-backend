@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_25_191705) do
+ActiveRecord::Schema.define(version: 2019_09_26_202534) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -60,6 +60,12 @@ ActiveRecord::Schema.define(version: 2019_09_25_191705) do
     t.index ["department_id"], name: "index_sectors_on_department_id"
   end
 
+  create_table "ticket_statuses", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "tickets", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "title"
     t.text "body"
@@ -69,9 +75,11 @@ ActiveRecord::Schema.define(version: 2019_09_25_191705) do
     t.uuid "company_id"
     t.uuid "department_id"
     t.uuid "sector_id"
+    t.uuid "ticket_status_id"
     t.index ["company_id"], name: "index_tickets_on_company_id"
     t.index ["department_id"], name: "index_tickets_on_department_id"
     t.index ["sector_id"], name: "index_tickets_on_sector_id"
+    t.index ["ticket_status_id"], name: "index_tickets_on_ticket_status_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -116,5 +124,6 @@ ActiveRecord::Schema.define(version: 2019_09_25_191705) do
   add_foreign_key "sectors", "departments"
   add_foreign_key "tickets", "departments"
   add_foreign_key "tickets", "sectors"
+  add_foreign_key "tickets", "ticket_statuses"
   add_foreign_key "users", "employees"
 end

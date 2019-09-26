@@ -93,6 +93,22 @@ namespace :dev do
 
     #################################################
 
+    puts "Cadastrando Status..."
+
+    statuses = %w(aberto fechado aguardando_aprovação)
+
+    ActiveRecord::Base.transaction do
+      statuses.each do |status|
+        TicketStatus.create!(
+          status: status
+        )
+      end
+    end
+
+    puts "Status cadastradas com sucesso!"
+
+    ###############################################33
+
     puts "Cadastrando Tickets..."
 
     100.times do |i|
@@ -100,7 +116,8 @@ namespace :dev do
         title: Faker::Lorem.sentence(word_count: 3),
         body: Faker::Lorem.paragraph(sentence_count: 2),
         conclude_at: Faker::Date.birthday(min_age: 18, max_age: 65),
-        company_id: Company.all.sample.id
+        company_id: Company.all.sample.id,
+        ticket_status_id: TicketStatus.all.sample.id
       )
     end
 

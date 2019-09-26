@@ -64,7 +64,8 @@ module V1
                                         :conclude_at, 
                                         :company_id, 
                                         :department_id,
-                                        :sector_id])
+                                        :sector_id,
+                                        :ticket_status_id])
       end
   end    
 end
