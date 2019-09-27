@@ -27,6 +27,8 @@ Rails.application.routes.draw do
     end
 
     resources :ticket_statuses
+
+    resources :ticket_types
     
   end
 end

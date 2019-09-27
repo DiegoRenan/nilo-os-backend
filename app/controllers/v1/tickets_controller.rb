@@ -65,7 +65,8 @@ module V1
                                         :company_id, 
                                         :department_id,
                                         :sector_id,
-                                        :ticket_status_id])
+                                        :ticket_status_id,
+                                        :employee_id])
       end
   end    
 end

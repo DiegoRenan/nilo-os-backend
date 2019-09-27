@@ -39,6 +39,7 @@ class Employee < ApplicationRecord
   belongs_to :sector, optional: true
 
   has_one :user, dependent: :destroy
+  has_many :tickets
 
   #before save
   before_save { self.email = email.downcase }

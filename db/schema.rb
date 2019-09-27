@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_26_202534) do
+ActiveRecord::Schema.define(version: 2019_09_27_171712) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -52,6 +52,15 @@ ActiveRecord::Schema.define(version: 2019_09_26_202534) do
     t.index ["sector_id"], name: "index_employees_on_sector_id"
   end
 
+  create_table "responsibles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "employee_id"
+    t.uuid "ticket_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["employee_id"], name: "index_responsibles_on_employee_id"
+    t.index ["ticket_id"], name: "index_responsibles_on_ticket_id"
+  end
+
   create_table "sectors", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name"
     t.uuid "department_id"
@@ -66,6 +75,12 @@ ActiveRecord::Schema.define(version: 2019_09_26_202534) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "ticket_types", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "tickets", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "title"
     t.text "body"
@@ -76,10 +91,14 @@ ActiveRecord::Schema.define(version: 2019_09_26_202534) do
     t.uuid "department_id"
     t.uuid "sector_id"
     t.uuid "ticket_status_id"
+    t.uuid "ticket_type_id"
+    t.uuid "employee_id"
     t.index ["company_id"], name: "index_tickets_on_company_id"
     t.index ["department_id"], name: "index_tickets_on_department_id"
+    t.index ["employee_id"], name: "index_tickets_on_employee_id"
     t.index ["sector_id"], name: "index_tickets_on_sector_id"
     t.index ["ticket_status_id"], name: "index_tickets_on_ticket_status_id"
+    t.index ["ticket_type_id"], name: "index_tickets_on_ticket_type_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -121,9 +140,13 @@ ActiveRecord::Schema.define(version: 2019_09_26_202534) do
   add_foreign_key "employees", "companies"
   add_foreign_key "employees", "departments"
   add_foreign_key "employees", "sectors"
+  add_foreign_key "responsibles", "employees"
+  add_foreign_key "responsibles", "tickets"
   add_foreign_key "sectors", "departments"
   add_foreign_key "tickets", "departments"
+  add_foreign_key "tickets", "employees"
   add_foreign_key "tickets", "sectors"
   add_foreign_key "tickets", "ticket_statuses"
+  add_foreign_key "tickets", "ticket_types"
   add_foreign_key "users", "employees"
 end
