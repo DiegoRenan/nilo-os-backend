@@ -157,6 +157,23 @@ namespace :dev do
       end
 
       puts "Tickets cadastrados com sucesso!"
+
+      #################################################
+
+      puts "Cadastrando Comments"
+
+      Ticket.all.each do |ticket|
+        Random.rand(5).times do
+          comment = Comment.create!(
+            body: Faker::Lorem.paragraph(sentence_count: 2),
+            employee_id: Employee.all.sample.id,
+            ticket_id: Ticket.all.sample.id
+          )
+        end
+      end
+
+      puts "Comments cadastrados com sucesso!"
+
     
     end
 

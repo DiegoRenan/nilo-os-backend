@@ -49,6 +49,7 @@ class Ticket < ApplicationRecord
 
   has_many :responsibles, dependent: :destroy
   has_many :employees, :through => :responsibles
+  has_many :comments, dependent: :destroy
 
   #Validations
   validates :title, presence: true, length: { minimum: 6, maximum: 500 }

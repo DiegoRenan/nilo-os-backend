@@ -11,10 +11,12 @@ Rails.application.routes.draw do
 
     resources :tickets do
       resource :company, only: [:show]
+      resource :comments, only: [:show]
     end
 
     resources :employees do 
       resource :company, only: [:show]
+      resource :comments, only: [:show]
     end
 
     resources :departments do 
@@ -29,6 +31,8 @@ Rails.application.routes.draw do
     resources :ticket_statuses
 
     resources :ticket_types
+
+    resources :comments
     
   end
 end

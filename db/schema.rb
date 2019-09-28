@@ -10,12 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_27_171712) do
+ActiveRecord::Schema.define(version: 2019_09_27_185451) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
+
+  create_table "comments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.text "body"
+    t.uuid "employee_id"
+    t.uuid "ticket_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["employee_id"], name: "index_comments_on_employee_id"
+    t.index ["ticket_id"], name: "index_comments_on_ticket_id"
+  end
 
   create_table "companies", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name"
@@ -136,6 +146,8 @@ ActiveRecord::Schema.define(version: 2019_09_27_171712) do
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end
 
+  add_foreign_key "comments", "employees"
+  add_foreign_key "comments", "tickets"
   add_foreign_key "departments", "companies"
   add_foreign_key "employees", "companies"
   add_foreign_key "employees", "departments"
