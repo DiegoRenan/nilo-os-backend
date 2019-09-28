@@ -9,10 +9,12 @@ class Hash
   end
 end
 
-describe V1::DepartmentsController, type: :controller do
+RSpec.describe V1::DepartmentsController, type: :controller do
   
   before(:each) do
     @current_user = create(:user)
+    @company = create(:company)
+    @department = create(:department)
   end
   
   context 'request index' do
@@ -43,10 +45,9 @@ describe V1::DepartmentsController, type: :controller do
     it 'should return an id' do
       request.accept = 'applicaton/vnd.api+json'
       request.headers.merge! @current_user.create_new_auth_token
-      department = Department.first
-      get :show, params: {id: department.id }
+      get :show, params: {id: @department.id }
       response_body = JSON.parse(response.body)
-      expect(response_body['data'][0]['id']).to eq(department.id)
+      expect(response_body['data'][0]['id']).to eq(@department.id)
     end
     
   end
@@ -62,7 +63,7 @@ describe V1::DepartmentsController, type: :controller do
           "type": "department",
           "attributes": {
               "name": "New department",
-              "company_id": "#{ Company.first.id }"
+              "company_id": "#{ @company.id }"
           }
         }
       }
@@ -82,19 +83,18 @@ describe V1::DepartmentsController, type: :controller do
       request.accept = 'applicaton/vnd.api+json'
       request.headers.merge! @current_user.create_new_auth_token
       request.accept = 'application/vnd.api+json'
-      department = create(:department)
-
+      
       params = {
-        "id": department.id,
+        "id": @department.id,
         "type": "departments",
         "attributes": {
           "name": "Department updated"
         }
       }
 
-      put :update, params: { id: department.id, data: params }
+      put :update, params: { id: @department.id, data: params }
       expect(response).to have_http_status(:ok)
-      department = Department.find(department.id)
+      department = Department.find(@department.id)
       expect(department.name).to eq('DEPARTMENT UPDATED')
     end
 
@@ -108,7 +108,7 @@ describe V1::DepartmentsController, type: :controller do
       request.accept = 'application/vnd.api+json'
       department = create(:department)
       expect {
-        delete :destroy, params: { id: department.id }
+        delete :destroy, params: { id: @department.id }
       }.to change(Department, :count).by(-1)
     end
 

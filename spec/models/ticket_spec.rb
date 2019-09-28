@@ -36,27 +36,46 @@
 #  fk_rails_...  (ticket_type_id => ticket_types.id)
 #
 
-class Ticket < ApplicationRecord
-  
-  #Associations
-  belongs_to :company do
-    #HATEOAS 
-    link(:related) { v1_ticket_company_url(object.id)}
+require 'rails_helper'
+
+RSpec.describe Ticket, type: :model do
+
+  context 'should be valid' do
+
+    it 'create' do
+      expect(build(:ticket, title: "Title", body: 'Hello body')).to be_valid
+    end
+
   end
 
-  belongs_to :department, optional: true
-  belongs_to :sector, optional: true
-  belongs_to :employee
-  belongs_to :ticket_status
-  belongs_to :ticket_type
-  belongs_to :priority, optional: true
-  
+  context 'should not be valid' do
+    
+    it 'when title is empty' do
+      expect(build(:ticket, title: '')).to_not be_valid
+    end
 
-  has_many :responsibles, dependent: :destroy
-  has_many :employees, :through => :responsibles
-  has_many :comments, dependent: :destroy
+    it 'when title is a blank space' do
+      expect(build(:ticket, title: '')).to_not be_valid
+    end
 
-  #Validations
-  validates :title, presence: true, length: { maximum: 500 }
-  validates :body, presence: true, length: { maximum: 20000 }
+    it 'when body is empty' do
+      expect(build(:ticket, body: '')).to_not be_valid
+    end
+
+    it 'when body is a blank space' do
+      expect(build(:ticket, body: '')).to_not be_valid
+    end
+
+    it 'when title is more then 500 letters' do
+      name = 'b' * 501
+      expect(build(:ticket, title: name)).to_not be_valid
+    end
+
+    it 'when body is more then 20000 letters' do
+      name = 'b' * 20001
+      expect(build(:ticket, body: name)).to_not be_valid
+    end
+
+  end
+
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_27_185451) do
+ActiveRecord::Schema.define(version: 2019_09_28_224043) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -62,6 +62,12 @@ ActiveRecord::Schema.define(version: 2019_09_27_185451) do
     t.index ["sector_id"], name: "index_employees_on_sector_id"
   end
 
+  create_table "priorities", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "nivel", default: "plan"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "responsibles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "employee_id"
     t.uuid "ticket_id"
@@ -103,9 +109,11 @@ ActiveRecord::Schema.define(version: 2019_09_27_185451) do
     t.uuid "ticket_status_id"
     t.uuid "ticket_type_id"
     t.uuid "employee_id"
+    t.uuid "priority_id"
     t.index ["company_id"], name: "index_tickets_on_company_id"
     t.index ["department_id"], name: "index_tickets_on_department_id"
     t.index ["employee_id"], name: "index_tickets_on_employee_id"
+    t.index ["priority_id"], name: "index_tickets_on_priority_id"
     t.index ["sector_id"], name: "index_tickets_on_sector_id"
     t.index ["ticket_status_id"], name: "index_tickets_on_ticket_status_id"
     t.index ["ticket_type_id"], name: "index_tickets_on_ticket_type_id"
@@ -157,6 +165,7 @@ ActiveRecord::Schema.define(version: 2019_09_27_185451) do
   add_foreign_key "sectors", "departments"
   add_foreign_key "tickets", "departments"
   add_foreign_key "tickets", "employees"
+  add_foreign_key "tickets", "priorities"
   add_foreign_key "tickets", "sectors"
   add_foreign_key "tickets", "ticket_statuses"
   add_foreign_key "tickets", "ticket_types"

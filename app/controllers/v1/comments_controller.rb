@@ -1,6 +1,7 @@
 module V1
   class CommentsController < ApplicationController
-    before_action :set_comment, only: [:show, :update, :destroy]
+    before_action :set_comments, only: [:show]
+    before_action :set_comment, only: [:update, :destroy]
     before_action :authenticate_user!
   
     # GET v1/comments
@@ -42,7 +43,7 @@ module V1
   
     private
       # Use callbacks to share common setup or constraints between actions.
-      def set_comment
+      def set_comments
         
         if params[:ticket_id]
           @comments = Ticket.find(params[:ticket_id]).comments
@@ -61,6 +62,15 @@ module V1
           render json: ErrorSerializer.serialize(error), status: :unprocessable_entity
         end
 
+      end
+
+      def set_comment
+        if Comment.exists?(params[:id])
+          @comment = Comment.find(params[:id])
+        else
+          error = {:id=>["Comentario não encontrado"]}
+          render json: ErrorSerializer.serialize(error), status: :unprocessable_entity
+        end
       end
   
       # Only allow a trusted parameter "white list" through.

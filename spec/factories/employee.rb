@@ -12,6 +12,5 @@ FactoryBot.define do
     cep { Faker::Number.number(digits: 8) }
     
     company
-    user
   end
 end

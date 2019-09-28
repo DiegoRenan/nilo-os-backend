@@ -9,7 +9,7 @@ class Hash
   end
 end
 
-describe V1::SectorsController, type: :controller do
+RSpec.describe V1::SectorsController, type: :controller do
 
   before(:each) do
     @current_user = create(:user)
@@ -43,7 +43,7 @@ describe V1::SectorsController, type: :controller do
     it 'should return an id' do
       request.accept = 'applicaton/vnd.api+json'
       request.headers.merge! @current_user.create_new_auth_token
-      sector = Sector.first
+      sector = create(:sector)
       get :show, params: {id: sector.id }
       response_body = JSON.parse(response.body)
       expect(response_body['data'][0]['id']).to eq(sector.id)
@@ -56,13 +56,13 @@ describe V1::SectorsController, type: :controller do
     it 'should create a sector' do
       request.accept = 'applicaton/vnd.api+json'
       request.headers.merge! @current_user.create_new_auth_token
-     
+      department = create(:department)
       sector = {
         "data": {
-          "type": "sector",
+          "type": "sectors",
           "attributes": {
               "name": "New sector",
-              "department_id": "#{ Department.first.id }"
+              "department_id": "#{ department.id }"
           }
         }
       }

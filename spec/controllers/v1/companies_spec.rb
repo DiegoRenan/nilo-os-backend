@@ -9,7 +9,7 @@ class Hash
   end
 end
 
-describe V1::CompaniesController, type: :controller do
+RSpec.describe V1::CompaniesController, type: :controller do
 
   before(:each) do
     @current_user = create(:user)
@@ -43,7 +43,7 @@ describe V1::CompaniesController, type: :controller do
     it 'should return an id' do
       request.accept = 'applicaton/vnd.api+json'
       request.headers.merge! @current_user.create_new_auth_token
-      company = Company.first
+      company = create(:company)
       request.accept = 'applicaton/vnd.api+json'
       get :show, params: {id: company.id}
       response_body = JSON.parse(response.body)
@@ -80,7 +80,7 @@ describe V1::CompaniesController, type: :controller do
     it 'should update a company name' do
       request.accept = 'applicaton/vnd.api+json'
       request.headers.merge! @current_user.create_new_auth_token
-      company = Company.first
+      company = create(:company)
       params = {
         "id": company.id,
         "type": "companies",
@@ -114,8 +114,8 @@ describe V1::CompaniesController, type: :controller do
     it 'should not delete a company with tickets' do
       request.accept = 'applicaton/vnd.api+json'
       request.headers.merge! @current_user.create_new_auth_token 
-      company = Company.first
-      request.accept = 'application/vnd.api+json'
+      company = create(:company)
+      ticket = create(:ticket, company_id: company.id)
       delete :destroy, params: {id: company.id}
       expect(response).to have_http_status(:conflict)
       get :show, params: {id: company.id}

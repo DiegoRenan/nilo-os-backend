@@ -126,6 +126,23 @@ namespace :dev do
 
       ###############################################33
 
+
+      puts "Cadastrando Priorities..."
+
+      priorities = %w(plan important urgent)
+
+      ActiveRecord::Base.transaction do
+        priorities.each do |priority|
+          Priority.create!(
+            nivel: priority
+          )
+        end
+      end
+
+      puts "Priorities cadastradas com sucesso!"
+
+      ###############################################33
+
       puts "Cadastrando Tickets..."
 
       100.times do |i|
@@ -136,7 +153,8 @@ namespace :dev do
           company_id: Company.all.sample.id,
           ticket_status_id: TicketStatus.all.sample.id,
           ticket_type_id: TicketType.all.sample.id,
-          employee_id: Employee.all.sample.id
+          employee_id: Employee.all.sample.id,
+          priority_id: Priority.all.sample.id
         )
       end
 

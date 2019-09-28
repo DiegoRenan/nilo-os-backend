@@ -42,7 +42,7 @@ RSpec.describe V1::TicketTypesController, type: :controller do
     it 'should return an id' do
       request.accept = 'applicaton/vnd.api+json'
       request.headers.merge! @current_user.create_new_auth_token
-      type = TicketType.first
+      type = create(:ticket_types)
       request.accept = 'applicaton/vnd.api+json'
       get :show, params: {id: type.id }
       response_body = JSON.parse(response.body)
@@ -79,7 +79,7 @@ RSpec.describe V1::TicketTypesController, type: :controller do
     it 'should update a status status' do
       request.accept = 'applicaton/vnd.api+json'
       request.headers.merge! @current_user.create_new_auth_token
-      type = TicketType.first
+      type = create(:ticket_types)
       params = {
         "id": type.id,
         "type": "type-status",
@@ -113,7 +113,7 @@ RSpec.describe V1::TicketTypesController, type: :controller do
     it 'should not delete a status with tickets' do
       request.accept = 'applicaton/vnd.api+json'
       request.headers.merge! @current_user.create_new_auth_token 
-      type = TicketType.first
+      type = create(:ticket_types)
       request.accept = 'application/vnd.api+json'
       delete :destroy, params: {id: type.id }
       expect(response).to have_http_status(:conflict)

@@ -55,7 +55,12 @@ module V1
     end
 
     def destroy
-      @employee.destroy
+      if @employee.tickets.exists? || @employee.responsibles.exists?
+        @employee.errors.add('Colaborador', 'Possuí Tickets vinculados')
+        render json: ErrorSerializer.serialize(@employee.errors), status: :conflict
+      else
+        @employee.destroy
+      end
     end
 
     private
@@ -90,7 +95,10 @@ module V1
                                                                               :cep,
                                                                               :company_id,
                                                                               :department_id,
-                                                                              :sector_id])
+                                                                              :sector_id,
+                                                                              :employee_id,
+                                                                              :ticket_status_id
+                                                                              :ticket_type_id])
       end
 
   end  

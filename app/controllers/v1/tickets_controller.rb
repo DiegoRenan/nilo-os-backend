@@ -1,7 +1,7 @@
 module V1
   class TicketsController < ApplicationController
-    before_action :set_ticket, only: [:destroy]
-    before_action :set_ticket_company, only: [:show, :update]
+    before_action :set_ticket, only: [:update, :destroy]
+    before_action :set_tickets, only: [:show]
     before_action :authenticate_user!
   
     # GET /tickets
@@ -23,7 +23,7 @@ module V1
       if @ticket.save
         render json: @ticket, status: :created, location: @tickets
       else
-        render json: ErrorSerializer.serialize(@company.errors), status: :unprocessable_entity
+        render json: ErrorSerializer.serialize(@ticket.errors), status: :unprocessable_entity
       end
     end
   
@@ -47,7 +47,7 @@ module V1
         @ticket = Ticket.find(params[:id])
       end
       
-      def set_ticket_company
+      def set_tickets
         if params[:company_id]
           @tickets = Company.find(params[:company_id]).tickets
           return @tickets
@@ -66,7 +66,9 @@ module V1
                                         :department_id,
                                         :sector_id,
                                         :ticket_status_id,
-                                        :employee_id])
+                                        :ticket_type_id,
+                                        :employee_id,
+                                        :priority_id])
       end
   end    
 end

@@ -33,6 +33,8 @@ Rails.application.routes.draw do
     resources :ticket_types
 
     resources :comments
+
+    resources :priorities, only: [:index]
     
   end
 end
