@@ -13,7 +13,13 @@ module V1
   
     # GET /tickets/1
     def show
-      render json: @tickets
+      render json: @tickets, include: [:company, 
+                                       :department,
+                                       :sector,
+                                       :ticket_status,
+                                       :ticket_type,
+                                       :employee
+                                      ]
     end
   
     # POST /tickets
