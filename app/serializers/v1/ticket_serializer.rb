@@ -34,7 +34,7 @@ module V1
       names = []
       unless responsibles.empty?
         responsibles.each do |responsible|
-          names.push(responsible.name)
+          names.push({id: responsible.id, name: responsible.name})
         end
       end
       names
