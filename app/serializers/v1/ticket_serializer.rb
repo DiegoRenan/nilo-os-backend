@@ -1,6 +1,6 @@
 module V1
   class TicketSerializer < ActiveModel::Serializer
-    attributes :id, :title, :body, :conclude, :nivel, :author, :responsibles, :created, :updated
+    attributes :id, :title, :body, :conclude, :nivel, :author, :created, :updated
 
     belongs_to :company
     belongs_to :department
@@ -27,17 +27,6 @@ module V1
 
     def author
       object.employee.name
-    end
-
-    def responsibles
-      responsibles = object.employees || []
-      names = []
-      unless responsibles.empty?
-        responsibles.each do |responsible|
-          names.push({id: responsible.id, name: responsible.name})
-        end
-      end
-      names
     end
   
     def attributes(*args)

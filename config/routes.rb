@@ -12,6 +12,7 @@ Rails.application.routes.draw do
     resources :tickets do
       resource :company, only: [:show]
       resource :comments, only: [:show]
+      resource :responsibles, only: [:show]
     end
 
     resources :employees do 
@@ -36,5 +37,6 @@ Rails.application.routes.draw do
 
     resources :priorities, only: [:index]
     
+    resources :responsibles, only: [:destroy, :create]
   end
 end

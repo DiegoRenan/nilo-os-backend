@@ -97,7 +97,7 @@ module V1
                                                                               :department_id,
                                                                               :sector_id,
                                                                               :employee_id,
-                                                                              :ticket_status_id
+                                                                              :ticket_status_id,
                                                                               :ticket_type_id])
       end
 
