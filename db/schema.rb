@@ -86,7 +86,7 @@ ActiveRecord::Schema.define(version: 2019_09_28_224043) do
   end
 
   create_table "ticket_statuses", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.string "status"
+    t.string "status", default: "ABERTO"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

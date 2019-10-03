@@ -3,7 +3,7 @@
 # Table name: ticket_statuses
 #
 #  id         :uuid             not null, primary key
-#  status     :string
+#  status     :string           default("ABERTO")
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
