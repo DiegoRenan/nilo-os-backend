@@ -1,6 +1,6 @@
 module V1
   class TicketSerializer < ActiveModel::Serializer
-    attributes :id, :title, :body, :conclude, :nivel, :author, :created, :updated
+    attributes :id, :title, :body, :conclude, :nivel, :author, :created, :updated, :responsibles 
 
     belongs_to :company
     belongs_to :department
@@ -27,6 +27,10 @@ module V1
 
     def author
       object.employee.name
+    end
+
+    def responsibles
+      object.responsibles.map { |resp| resp.employee.name}
     end
   
     def attributes(*args)
