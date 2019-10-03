@@ -15,6 +15,9 @@ Rails.application.routes.draw do
       resource :responsibles, only: [:show]
     end
 
+    post '/close_ticket', to: 'tickets#close'
+    post '/aprove_ticket', to: 'tickets#aprove'
+
     resources :employees do 
       resource :company, only: [:show]
       resource :comments, only: [:show]

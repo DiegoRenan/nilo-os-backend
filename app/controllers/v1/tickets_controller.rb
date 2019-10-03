@@ -1,6 +1,6 @@
 module V1
   class TicketsController < ApplicationController
-    before_action :set_ticket, only: [:update, :destroy]
+    before_action :set_ticket, only: [:update, :destroy, :close, :aprove]
     before_action :set_tickets, only: [:show]
     before_action :authenticate_user!
   
@@ -30,6 +30,19 @@ module V1
         render json: @ticket, status: :created, location: @tickets
       else
         render json: ErrorSerializer.serialize(@ticket.errors), status: :unprocessable_entity
+      end
+    end
+
+    def close
+      ActiveRecord::Base.transaction do 
+        @ticket.close
+      end
+    end
+
+    def aprove
+      ActiveRecord::Base.transaction do
+        @ticket.aprove
+        @ticket.set_plan 
       end
     end
   

@@ -59,4 +59,27 @@ class Ticket < ApplicationRecord
   #Validations
   validates :title, presence: true, length: { maximum: 500 }
   validates :body, presence: true, length: { maximum: 20000 }
+
+
+  def close
+    ActiveRecord::Base.transaction do 
+      aguardando = TicketStatus.where(status: "AGUARDANDO_APROVAÇÃO")
+      update_attribute(:ticket_status_id, aguardando.take.id)
+    end
+  end
+
+  def aprove
+    ActiveRecord::Base.transaction do
+      conclude = TicketStatus.where(status: "CONCLUIDO")
+      update_attribute(:ticket_status_id, conclude.take.id)
+    end
+  end
+
+  def set_plan
+    ActiveRecord::Base.transaction do
+      plan = Priority.where(nivel: "plan")
+      update_attribute(:priority_id, plan.take.id)
+    end
+  end
+
 end
