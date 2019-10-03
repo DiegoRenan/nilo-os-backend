@@ -21,6 +21,12 @@ module V1
       @comment = Comment.new(comment_params)
   
       if @comment.save
+        ticket = Ticket.find(@comment.ticket_id)
+        
+        unless ticket.ticket_status.status === "ABERTO"
+          ticket.open
+        end
+        
         render json: @comment, status: :created, location: @comments
       else
         render json: ErrorSerializer.serialize(@comment.errors), status: :unprocessable_entity
@@ -30,6 +36,12 @@ module V1
     # PATCH/PUT v1/comments/1
     def update
       if @comment.update(comment_params)
+        ticket = Ticket.find(@comment.ticket_id)
+        
+        unless ticket.ticket_status.status === "ABERTO"
+          ticket.open
+        end
+
         render json: @comment
       else
         render json: ErrorSerializer.serialize(@comment.errors), status: :unprocessable_entity

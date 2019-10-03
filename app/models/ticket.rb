@@ -60,6 +60,12 @@ class Ticket < ApplicationRecord
   validates :title, presence: true, length: { maximum: 500 }
   validates :body, presence: true, length: { maximum: 20000 }
 
+  def open
+    ActiveRecord::Base.transaction do
+      opened = TicketStatus.where(status: "ABERTO")
+      update_attribute(:ticket_status_id, opened.take.id)
+    end
+  end
 
   def close
     ActiveRecord::Base.transaction do 
@@ -70,7 +76,7 @@ class Ticket < ApplicationRecord
 
   def aprove
     ActiveRecord::Base.transaction do
-      conclude = TicketStatus.where(status: "CONCLUIDO")
+      conclude = TicketStatus.where(status: "CONCLUÍDO")
       update_attribute(:ticket_status_id, conclude.take.id)
     end
   end

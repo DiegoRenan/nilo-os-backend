@@ -95,7 +95,7 @@ namespace :dev do
 
       puts "Cadastrando Status..."
 
-      statuses = %w(aberto concluido aguardando_aprovação)
+      statuses = %w(aberto concluído aguardando_aprovação)
 
       ActiveRecord::Base.transaction do
         statuses.each do |status|
