@@ -2,33 +2,39 @@
 #
 # Table name: employees
 #
-#  id         :uuid             not null, primary key
-#  born       :date
-#  cep        :string
-#  city       :string
-#  cpf        :string
-#  district   :string
-#  email      :string
-#  name       :string
-#  number     :string
-#  street     :string
-#  uf         :string
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#  company_id :uuid
+#  id            :uuid             not null, primary key
+#  born          :date
+#  cep           :string
+#  city          :string
+#  cpf           :string
+#  district      :string
+#  email         :string
+#  name          :string
+#  number        :string
+#  street        :string
+#  uf            :string
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  company_id    :uuid
+#  department_id :uuid
+#  sector_id     :uuid
 #
 # Indexes
 #
-#  index_employees_on_company_id  (company_id)
+#  index_employees_on_company_id     (company_id)
+#  index_employees_on_department_id  (department_id)
+#  index_employees_on_sector_id      (sector_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (company_id => companies.id)
+#  fk_rails_...  (department_id => departments.id)
+#  fk_rails_...  (sector_id => sectors.id)
 #
 
 require 'rails_helper'
 
-RSpec.describe Employee, type: :model do
+describe V1::Employee, type: :model do
   context 'should be valid' do
 
     it 'with full datas' do

@@ -21,6 +21,9 @@ module Backend
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.2
+
+    config.i18n.default_locale = 'pt-BR'
+    config.time_zone = 'Brasilia'
     
     # Change the primary default type
     config.generators do |g|

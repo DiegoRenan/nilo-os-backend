@@ -9,7 +9,13 @@ class Hash
   end
 end
 
+
 RSpec.describe V1::EmployeesController, type: :controller do
+
+  before(:each) do
+    @current_user = create(:user)
+    @employee = create(:employee)
+  end
 
   context 'GET v1/employees' do
     
@@ -18,7 +24,9 @@ RSpec.describe V1::EmployeesController, type: :controller do
       expect(response).to have_http_status(:not_acceptable)
     end
     
-    it 'should access with header' do
+    it 'should access with headers and auth' do
+      request.accept = 'applicaton/vnd.api+json'
+      request.headers.merge! @current_user.create_new_auth_token
       request.accept = 'applicaton/vnd.api+json'
       get :index
       expect(response).to have_http_status(:ok)
@@ -29,11 +37,12 @@ RSpec.describe V1::EmployeesController, type: :controller do
   context 'GET v1/employee/:id' do
 
     it 'should return an id' do
-      employee = create(:employee)
       request.accept = 'applicaton/vnd.api+json'
-      get :show, params: {id: employee.id}
+      request.headers.merge! @current_user.create_new_auth_token
+      request.accept = 'applicaton/vnd.api+json'
+      get :show, params: {id: @employee.id}
       response_body = JSON.parse(response.body)
-      expect(response_body.json("data > id")).to eq(employee.id)
+      expect(response_body['data'][0]['id']).to eq(@employee.id)
     end
 
   end
@@ -41,9 +50,10 @@ RSpec.describe V1::EmployeesController, type: :controller do
   context 'POST v1/employee' do
 
     it 'should create a employee' do
+      request.accept = 'applicaton/vnd.api+json'
+      request.headers.merge! @current_user.create_new_auth_token
       request.accept = 'application/vnd.api+json'
       company = create(:company)
-      
       employee_attributes = {
         "data": {
             "type": "employees",
@@ -74,20 +84,21 @@ RSpec.describe V1::EmployeesController, type: :controller do
   context 'PUT v1/employees/:id' do
     
     it 'should update a company name' do
+      request.accept = 'applicaton/vnd.api+json'
+      request.headers.merge! @current_user.create_new_auth_token
       request.accept = 'application/vnd.api+json'
-      employee = create(:employee)
-
+  
       params = {
-        "id": employee.id,
+        "id": @employee.id,
         "type": "employees",
         "attributes": {
           "name": "Employee updated"
         }
       }
 
-      put :update, params: { id: employee.id, data: params }
+      put :update, params: { id: @employee.id, data: params }
       expect(response).to have_http_status(:ok)
-      employee = Employee.find(employee.id)
+      employee = Employee.find(@employee.id)
       expect(employee.name).to eq('Employee updated')
     end
 
@@ -96,10 +107,12 @@ RSpec.describe V1::EmployeesController, type: :controller do
   context 'DELETE v1/employees/:id' do
     
     it 'to delete' do
+      request.accept = 'applicaton/vnd.api+json'
+      request.headers.merge! @current_user.create_new_auth_token
       request.accept = 'application/vnd.api+json'
-      employee = create(:employee)
+      
       expect {
-        delete :destroy, params: { id: employee.id }
+        delete :destroy, params: { id: @employee.id }
       }.to change(Employee, :count).by(-1)
     end
 

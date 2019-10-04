@@ -12,7 +12,7 @@ module V1
   
     # GET v1/companies/1
     def show
-      render json: @company
+      render json: @company, include: [:departments]
     end
   
     # POST v1/companies
@@ -56,6 +56,11 @@ module V1
 
         if params[:employee_id]
           @company = Employee.find(params[:employee_id]).company
+          return @company
+        end
+
+        if params[:department_id]
+          @company = Department.find(params[:department_id]).company
           return @company
         end
         

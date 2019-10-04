@@ -13,30 +13,30 @@ module V1
 
     # GET v1/employee/:id
     def show
-      render json: @employees
+      render json: @employees, include: [:company, :department, :sector]
     end
 
     # POST v1/employees
     def create
       @employee = Employee.new(employee_params)
-      
+
       if @employee.save
         
         if !params[:data][:attributes][:password].nil? && !params[:data][:attributes][:password_confirmation].nil?
           password = params[:data][:attributes][:password]
           password_confirmation = params[:data][:attributes][:password_confirmation]
+          master = params[:data][:attributes][:master]
           
-          user = @employee.create_user!(email: @employee.email, password: password, password_confirmation: password_confirmation)
+          user = @employee.create_user!(email: @employee.email, password: password, password_confirmation: password_confirmation, master: master)
 
           if !user.valid?
-            puts "User INVALID"
-            @employee.erros.add({:password =>["Não foi possível criar um login. Verifique as informações dadas"]})
+            @employee.errors.add({:password =>["Não foi possível criar um login. Verifique as informações dadas"]})
           end
         
           render json: @employee, status: :created
         else
-          error = {:password=>["Usário #{@employee.name} criado sem Login"]}
-          render json: ErrorSerializer.serialize(error), status: :unprocessable_entity
+          @employee.errors.add('Usuário', 'Criada sem login')
+          render json: ErrorSerializer.serialize(@employee.errors), status: :unprocessable_entity
         end
 
       else
@@ -55,7 +55,12 @@ module V1
     end
 
     def destroy
-      @employee.destroy
+      if @employee.tickets.exists? || @employee.responsibles.exists?
+        @employee.errors.add('Colaborador', 'Possuí Tickets vinculados')
+        render json: ErrorSerializer.serialize(@employee.errors), status: :conflict
+      else
+        @employee.destroy
+      end
     end
 
     private
@@ -88,7 +93,12 @@ module V1
                                                                               :city,
                                                                               :uf,
                                                                               :cep,
-                                                                              :company_id])
+                                                                              :company_id,
+                                                                              :department_id,
+                                                                              :sector_id,
+                                                                              :employee_id,
+                                                                              :ticket_status_id,
+                                                                              :ticket_type_id])
       end
 
   end  

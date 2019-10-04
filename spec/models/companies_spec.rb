@@ -35,7 +35,7 @@ describe V1::Company, type: :model do
 
     it 'when name is more then 500 letters' do
       name = 'b' * 501
-      expect(Company.create(name: name))
+      expect(Company.create(name: name)).to_not be_valid
     end
 
     it 'when name is not unique' do
@@ -45,4 +45,10 @@ describe V1::Company, type: :model do
     end
 
   end
+
+  it 'should be saved in UPCASE' do
+    company = create(:company, name: 'company')
+    expect(company.name).to eq('COMPANY')
+  end
+
 end

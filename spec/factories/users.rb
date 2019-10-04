@@ -3,6 +3,7 @@
 # Table name: users
 #
 #  id                     :bigint           not null, primary key
+#  admin                  :boolean          default(FALSE)
 #  allow_password_change  :boolean          default(FALSE)
 #  confirmation_sent_at   :datetime
 #  confirmation_token     :string
@@ -14,6 +15,7 @@
 #  image                  :string
 #  last_sign_in_at        :datetime
 #  last_sign_in_ip        :string
+#  master                 :boolean          default(FALSE)
 #  name                   :string
 #  nickname               :string
 #  provider               :string           default("email"), not null
@@ -21,6 +23,7 @@
 #  reset_password_sent_at :datetime
 #  reset_password_token   :string
 #  sign_in_count          :integer          default(0)
+#  tec                    :boolean          default(TRUE)
 #  tokens                 :json
 #  uid                    :string           default(""), not null
 #  unconfirmed_email      :string
@@ -46,5 +49,7 @@ FactoryBot.define do
     email { Faker::Internet.email }
     password { "123456" } 
     password_confirmation { "123456" }
+
+    employee
   end
 end
