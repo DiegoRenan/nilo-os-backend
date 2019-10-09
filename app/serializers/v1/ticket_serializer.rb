@@ -1,6 +1,6 @@
 module V1
   class TicketSerializer < ActiveModel::Serializer
-    attributes :id, :title, :body, :conclude, :created, :updated, :author
+    attributes :id, :title, :body, :conclude, :created, :updated, :author, :nivel
 
     belongs_to :company
     belongs_to :department
@@ -8,6 +8,7 @@ module V1
     belongs_to :ticket_status
     belongs_to :ticket_type
     belongs_to :employee
+    belongs_to :priority
 
     def created
       I18n.l object.created_at
