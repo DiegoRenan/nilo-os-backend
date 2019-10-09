@@ -22,11 +22,13 @@ module V1
     end
 
     def nivel
-      object.priority.nivel
+      if !object.nil?
+        object.priority.nivel || ''
+      end
     end
 
     def author
-      object.employee.name
+      object.employee.name || ''
     end
 
     def responsibles
