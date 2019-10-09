@@ -9,19 +9,20 @@ namespace :prod do
 
       
       companies.each do |company|
-        Company.create!(
+        puts company
+        Company.where(name: company).first_or_create!(
           name: company
         )
       end
       
-
       puts "Companies cadastradas com sucesso!"
 
       ###############################################33
 
       puts "Cadastrando colaborador administrador"
       company = Company.where(name: "MATRIZ").take
-      employee = Employee.create!(
+      puts company
+      employee = Employee.where(email: "admin@nilo.com").first_or_create!(
         name: "Administrador",
         cpf: "00000000000",
         email: "admin@nilo.com",
@@ -31,12 +32,12 @@ namespace :prod do
 
       puts "Colaborador admin cadastrados com sucesso!"
 
-      ###############################################33
+      # ###############################################33
 
       puts "Cadastrando User para Administrador"
 
       employee = Employee.where(name: "Administrador").take
-      User.create!(
+      User.where(email: employee.email).first_or_create!(
         email: employee.email,
         password: "foobarcall", 
         password_confirmation: "foobarcall",
@@ -46,27 +47,27 @@ namespace :prod do
       
       puts "User cadastrados com sucesso!"
   
-      #################################################
+      # #################################################
       puts "Cadastrando Status..."
 
       statuses = %w(aberto concluído aguardando_aprovação)
 
       statuses.each do |status|
-        TicketStatus.create!(
+        TicketStatus.where(status: status.upcase).first_or_create!(
           status: status
         )
       end
 
       puts "Status cadastrados com sucesso!"
 
-      ###############################################33
+      # ###############################################33
       puts "Cadastrando Types..."
 
       types = %w(manutensão instalação assistencia)
 
       ActiveRecord::Base.transaction do
         types.each do |type|
-          TicketType.create!(
+          TicketType.where(name: type.upcase).first_or_create!(
             name: type.upcase
           )
         end
@@ -74,7 +75,7 @@ namespace :prod do
 
       puts "Types cadastradas com sucesso!"
 
-      ###############################################33
+      # ###############################################33
 
       puts "Cadastrando Priorities..."
 
@@ -82,7 +83,7 @@ namespace :prod do
 
       ActiveRecord::Base.transaction do
         priorities.each do |priority|
-          Priority.create!(
+          Priority.where(nivel: priority).first_or_create!(
             nivel: priority
           )
         end
