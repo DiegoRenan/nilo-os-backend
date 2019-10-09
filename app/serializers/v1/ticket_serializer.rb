@@ -31,7 +31,11 @@ module V1
     end
 
     def responsibles
-      object.responsibles.map { |resp| resp.employee.name}
+      if !object.nil?
+        object.responsibles.map { |resp| resp.employee.name}
+      else
+        return []
+      end
     end
   
     def attributes(*args)
