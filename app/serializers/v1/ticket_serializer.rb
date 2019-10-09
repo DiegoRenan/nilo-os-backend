@@ -1,6 +1,6 @@
 module V1
   class TicketSerializer < ActiveModel::Serializer
-    attributes :id, :title, :body, :conclude, :created, :updated, :nivel  
+    attributes :id, :title, :body, :conclude, :created, :updated, :author
 
     belongs_to :company
     belongs_to :department
@@ -22,9 +22,7 @@ module V1
     end
 
     def nivel
-      if !object.nil?
-        object.priority.nivel || ''
-      end
+      object.priority.nivel || ''
     end
 
     def author
