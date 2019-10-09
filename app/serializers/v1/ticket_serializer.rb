@@ -1,6 +1,6 @@
 module V1
   class TicketSerializer < ActiveModel::Serializer
-    attributes :id, :title, :body, :conclude, :created, :updated  
+    attributes :id, :title, :body, :conclude, :created, :updated, :nivel  
 
     belongs_to :company
     belongs_to :department
