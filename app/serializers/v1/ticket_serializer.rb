@@ -1,7 +1,7 @@
 module V1
   class TicketSerializer < ActiveModel::Serializer
-    attributes :id, :title, :body, :conclude, :nivel, :author, :created, :updated, :responsibles,
-               :department_id, :sector_id, :ticket_status_id, :ticket_type_id, :priority_id  
+    attributes :id, :title, :body, :conclude, :created, :updated, :author, :responsibles, :department_id, :sector_id,
+               :ticket_status_id, :ticket_type_id, :priority_id
 
     belongs_to :company
     belongs_to :department
@@ -9,6 +9,7 @@ module V1
     belongs_to :ticket_status
     belongs_to :ticket_type
     belongs_to :employee
+    belongs_to :priority
 
     def created
       I18n.l object.created_at
@@ -23,15 +24,20 @@ module V1
     end
 
     def nivel
-      object.priority.nivel
+      object.priority.nivel || ''
     end
 
     def author
-      object.employee.name
+      object.employee.name || ''
     end
 
     def responsibles
-      object.responsibles.map { |resp| resp.employee.name}
+      if !object.nil?
+       responsibles = object.responsibles.map { |resp| resp.employee.name}
+       return responsibles
+      else
+        return []
+      end
     end
   
     def attributes(*args)
