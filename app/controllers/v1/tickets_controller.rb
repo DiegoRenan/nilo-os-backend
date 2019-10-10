@@ -6,9 +6,13 @@ module V1
   
     # GET /tickets
     def index
-      @tickets = Ticket.all
-  
-      render json: @tickets
+      if current_user.admin? || current_user.master?
+        @tickets = Ticket.all 
+        render json: @tickets
+      else
+        user_tickets
+        render json: @tickets
+      end
     end
   
     # GET /tickets/1
@@ -74,6 +78,12 @@ module V1
         @tickets = Ticket.where(id: params[:id])
       end
       
+      def user_tickets
+        @t_resp = Ticket.where_responsible(current_user.employee)
+        @t_aut = Ticket.user_tickets(current_user)
+        @t_departments = Ticket.employee_department_tickets(current_user.employee)
+        @tickets = @t_resp.concat(@t_aut).concat(@t_departments)
+      end
   
       # Only allow a trusted parameter "white list" through.
       def ticket_params
