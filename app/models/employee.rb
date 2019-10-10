@@ -42,6 +42,8 @@ class Employee < ApplicationRecord
   
   has_many :tickets
 
+  has_many :responsibles
+
   #before save
   before_save { self.email = email.downcase }
 

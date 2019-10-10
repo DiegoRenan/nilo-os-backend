@@ -28,7 +28,11 @@ module V1
     end
 
     def author
-      object.employee.name || ''
+      { 
+        name: object.employee.name,
+        email: object.employee.email,
+        id: object.employee.id
+      }
     end
 
     def responsibles
