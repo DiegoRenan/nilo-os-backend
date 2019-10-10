@@ -38,14 +38,14 @@ module V1
 
     # DELETE v1/departments/1
     def destroy
-      if @department.tickets.exists? || @department.employees.exists?
-        @department.errors.add('Departamento', 'Possuí Tickets e/ou colaboradores vinculados', message: "Delete todos os Tickets da Empresa antes de prosseguir")
+      if @department.tickets.exists? || @department.employees.exists? || @department.sectors.exists?
+        @department.errors.add('Departamento', 'Possuí Tickets, colaboradores e/ou setores vinculados', message: "Delete todos os Tickets da Empresa antes de prosseguir")
         render json: ErrorSerializer.serialize(@department.errors), status: :conflict
       else
         @department.destroy
       end
     end
-
+    
     private
       def department_params
         ActiveModelSerializers::Deserialization.jsonapi_parse(params, only: [:name, :company_id])

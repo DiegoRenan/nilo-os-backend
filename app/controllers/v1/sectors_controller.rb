@@ -38,8 +38,8 @@ module V1
 
     # DELETE v1/sectors/1
     def destroy
-      if @sector.tickets.exists? || @sector.employees.exists?
-        @sector.errors.add('Setor', 'Possuí Tickets e/ou colaboradores vinculados')
+      if @sector.tickets.exists? || @sector.employees.exists? 
+        @sector.errors.add('Setor', 'Possuí Tickets, departamentos e/ou colaboradores vinculados')
         render json: ErrorSerializer.serialize(@sector.errors), status: :conflict
       else
         @sector.destroy
