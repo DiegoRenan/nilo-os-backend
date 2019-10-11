@@ -21,6 +21,7 @@ Rails.application.routes.draw do
     resources :employees do 
       resource :company, only: [:show]
       resource :comments, only: [:show]
+      resource :tickets, only: [:show]
     end
 
     resources :departments do 

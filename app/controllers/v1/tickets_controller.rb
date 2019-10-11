@@ -95,6 +95,10 @@ module V1
           @tickets = Company.find(params[:company_id]).tickets
           return @tickets
         end
+        if params[:employee_id]
+          @tickets = Employee.find(params[:employee_id]).tickets
+          return @tickets
+        end
         @tickets = Ticket.where(id: params[:id])
       end
       
