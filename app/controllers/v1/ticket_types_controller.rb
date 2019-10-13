@@ -2,6 +2,7 @@ module V1
   class TicketTypesController < ApplicationController
     before_action :set_type, only: [:show, :update, :destroy]
     before_action :authenticate_user!
+    before_action :only_admin, except: [:index, :show]
   
     # GET v1/ticket_types
     def index
@@ -55,7 +56,14 @@ module V1
           render json: ErrorSerializer.serialize(error), status: :unprocessable_entity
         end
       end
-  
+
+      def only_admin
+        unless current_user.admin?
+          error = {:acesso=>["Acesso não autorizado"]}
+          render json: ErrorSerializer.serialize(error), status: :unauthorized
+        end
+      end
+
       # Only allow a trusted parameter "white list" through.
       def type_params
         ActiveModelSerializers::Deserialization.jsonapi_parse(params, only: [:name])

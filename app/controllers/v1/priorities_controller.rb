@@ -1,7 +1,7 @@
 module V1
   class PrioritiesController < ApplicationController
     before_action :authenticate_user!
-
+    
     def index
       @priorities = Priority.all 
 
