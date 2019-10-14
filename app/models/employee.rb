@@ -44,6 +44,8 @@ class Employee < ApplicationRecord
 
   has_many :responsibles
 
+  has_one_attached :avatar
+
   #before save
   before_save { self.email = email.downcase }
 
