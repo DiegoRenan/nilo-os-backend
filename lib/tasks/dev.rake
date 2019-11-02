@@ -27,50 +27,125 @@ namespace :dev do
 
       puts "Cadastrando Departments..."
 
-      100.times do |i|
-        Department.create!(
-          name: Faker::Commerce.department(max: 2, fixed_amount: true),
-          company_id: Company.all.sample.id
-        )
-      end  
+      company_matriz = Company.where(name: "MATRIZ").take
+      company_shopping = Company.where(name: "SHOPPING").take
+
+      rh_matriz = Department.create!(
+        name: "R.H",
+        company_id: company_matriz.id
+      )
+
+      ti_shopping = Department.create!(
+        name: "T.I",
+        company_id: company_shopping.id
+      )
+
+      rh_shopping = Department.create!(
+        name: "R.H",
+        company_id: company_shopping.id
+      )
 
       puts "Departaments cadastrados"
 
       #################################################
 
       puts "Cadastrando Sectors.."
+      
+      rh_shopping_administrativo = Sector.create!(
+        name: "Administrativo",
+        department_id: rh_shopping.id
+      )
 
-      100.times do |i|
-        Sector.create!(
-          name: Faker::Commerce.department(max: 1, fixed_amount: true),
-          department_id: Department.all.sample.id
-        )
-      end  
+      rh_matriz_administrativo = Sector.create!(
+        name: "Administrativo",
+        department_id: rh_matriz.id
+      )
 
-      puts "Departaments cadastrados"
+      puts "Setores cadastrados"
 
       #################################################
 
       puts "Cadastrando Employees"
 
-      Company.all.each do |company|
-        Random.rand(5).times do
-          employee = Employee.create!(
-            name: Faker::Name.name,
-            cpf: Faker::Number.number(digits: 11),
-            born: Faker::Date.birthday(min_age: 18, max_age: 65),
-            email: Faker::Internet.email,
-            street: Faker::Address.street_name,
-            number: Faker::Number.number(digits: 2),
-            district: Faker::Nation.capital_city,
-            city: Faker::Address.city,
-            uf: Faker::Address.state_abbr,
-            cep: Faker::Number.number(digits: 8),
-            company_id: company.id,
-            sector_id: Sector.all.sample.id
-          )
-        end
-      end
+      administrador = Employee.create!(
+        name: "Administrador",
+        cpf: Faker::Number.number(digits: 11),
+        born: Faker::Date.birthday(min_age: 18, max_age: 65),
+        email: "admin@nilo.com",
+        street: Faker::Address.street_name,
+        number: Faker::Number.number(digits: 2),
+        district: Faker::Nation.capital_city,
+        city: Faker::Address.city,
+        uf: Faker::Address.state_abbr,
+        cep: Faker::Number.number(digits: 8),
+        company_id: company_matriz.id,
+        department_id: rh_matriz.id,
+        sector_id: rh_matriz_administrativo.id
+      )
+
+      master = Employee.create!(
+        name: "Master",
+        cpf: Faker::Number.number(digits: 11),
+        born: Faker::Date.birthday(min_age: 18, max_age: 65),
+        email: "master@nilo.com",
+        street: Faker::Address.street_name,
+        number: Faker::Number.number(digits: 2),
+        district: Faker::Nation.capital_city,
+        city: Faker::Address.city,
+        uf: Faker::Address.state_abbr,
+        cep: Faker::Number.number(digits: 8),
+        company_id: company_shopping.id,
+        department_id: rh_shopping.id,
+        sector_id: rh_shopping_administrativo.id
+      )
+
+      phill = Employee.create!(
+        name: "Phill",
+        cpf: Faker::Number.number(digits: 11),
+        born: Faker::Date.birthday(min_age: 18, max_age: 65),
+        email: "phill@nilo.com",
+        street: Faker::Address.street_name,
+        number: Faker::Number.number(digits: 2),
+        district: Faker::Nation.capital_city,
+        city: Faker::Address.city,
+        uf: Faker::Address.state_abbr,
+        cep: Faker::Number.number(digits: 8),
+        company_id: company_shopping.id,
+        department_id: rh_shopping.id,
+        sector_id: rh_shopping_administrativo.id
+      )
+
+      suki = Employee.create!(
+        name: "Suki",
+        cpf: Faker::Number.number(digits: 11),
+        born: Faker::Date.birthday(min_age: 18, max_age: 65),
+        email: "suki@nilo.com",
+        street: Faker::Address.street_name,
+        number: Faker::Number.number(digits: 2),
+        district: Faker::Nation.capital_city,
+        city: Faker::Address.city,
+        uf: Faker::Address.state_abbr,
+        cep: Faker::Number.number(digits: 8),
+        company_id: company_shopping.id,
+        department_id: ti_shopping.id
+      )      
+      
+      debora = Employee.create!(
+        name: "debora",
+        cpf: Faker::Number.number(digits: 11),
+        born: Faker::Date.birthday(min_age: 18, max_age: 65),
+        email: "debora@nilo.com",
+        street: Faker::Address.street_name,
+        number: Faker::Number.number(digits: 2),
+        district: Faker::Nation.capital_city,
+        city: Faker::Address.city,
+        uf: Faker::Address.state_abbr,
+        cep: Faker::Number.number(digits: 8),
+        company_id: company_matriz.id,
+        department_id: rh_matriz.id,
+        sector_id: rh_matriz_administrativo.id
+      )
+
 
       puts "Tickets cadastrados com sucesso!"
 
@@ -78,16 +153,42 @@ namespace :dev do
 
       puts "Cadastrando User para Employees"
 
-      employees = Employee.all
+      User.create!(
+        email: "admin@nilo.com",
+        password: "123456", 
+        password_confirmation: "123456",
+        employee: administrador,
+        admin: true
+      )
 
-      employees.each do |employee|
-        User.create!(
-          email: employee.email,
-          password: "123456", 
-          password_confirmation: "123456",
-          employee: employee
-        )
-      end
+      User.create!(
+        email: "master@nilo.com",
+        password: "123456", 
+        password_confirmation: "123456",
+        employee: master,
+        master: true
+      )
+
+      User.create!(
+        email: "phill@nilo.com",
+        password: "123456", 
+        password_confirmation: "123456",
+        employee: phill
+      )
+
+      User.create!(
+        email: "suki@nilo.com",
+        password: "123456", 
+        password_confirmation: "123456",
+        employee: suki
+      )
+
+      User.create!(
+        email: "debora@nilo.com",
+        password: "123456", 
+        password_confirmation: "123456",
+        employee: debora
+      )
       
       puts "Users cadastrados com sucesso!"
 

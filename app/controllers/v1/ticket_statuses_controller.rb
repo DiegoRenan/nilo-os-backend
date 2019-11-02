@@ -2,6 +2,7 @@ module V1
   class TicketStatusesController < ApplicationController
     before_action :set_status, only: [:show, :update, :destroy]
     before_action :authenticate_user!
+    before_action :only_admin, except: [:index, :show]
   
     # GET v1/ticket_statuses
     def index
@@ -53,6 +54,13 @@ module V1
         else
           error = {:id=>["Não encontrado Status com o id: #{params[:id]}"]}
           render json: ErrorSerializer.serialize(error), status: :unprocessable_entity
+        end
+      end
+
+      def only_admin
+        unless current_user.admin?
+          error = {:acesso=>["Acesso não autorizado"]}
+          render json: ErrorSerializer.serialize(error), status: :unauthorized
         end
       end
   

@@ -18,9 +18,11 @@ Rails.application.routes.draw do
     post '/close_ticket', to: 'tickets#close'
     post '/aprove_ticket', to: 'tickets#aprove'
 
-    resources :employees do 
+    resources :employees do
+      resources :avatar, only: [:show, :create] 
       resource :company, only: [:show]
       resource :comments, only: [:show]
+      resource :tickets, only: [:show]
     end
 
     resources :departments do 

@@ -88,4 +88,33 @@ class Ticket < ApplicationRecord
     end
   end
 
+  def self.where_responsible(tec)
+    tickets = []
+    Ticket.all.each do |ticket|
+      if ticket.responsibles.exists?
+        responsibles = ticket.responsibles.map { |r| r.employee_id }
+        if responsibles.include?(tec.id)
+          tickets.push(ticket)
+        end
+      end
+    end
+    tickets
+  end
+
+  def self.user_tickets(user)
+    if user.employee.tickets.exists?
+      user.employee.tickets.map { |ticket| ticket }
+    else 
+      return []
+    end
+  end
+
+  def self.employee_department_tickets(employee)
+    if employee.department.present?
+      employee.department.tickets
+    else 
+      return []
+    end
+  end
+
 end

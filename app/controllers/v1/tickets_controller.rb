@@ -6,20 +6,34 @@ module V1
   
     # GET /tickets
     def index
-      @tickets = Ticket.all
-  
-      render json: @tickets
+      if current_user.admin? || current_user.master?
+        @tickets = Ticket.all 
+        render json: @tickets
+      else
+        render json: @tickets
+      end
     end
   
     # GET /tickets/1
     def show
-      render json: @tickets, include: [:company, 
-                                       :department,
-                                       :sector,
-                                       :ticket_status,
-                                       :ticket_type,
-                                       :employee
-                                      ]
+      if current_user.admin? || current_user.master?
+        render json: @tickets, include: [:company, 
+                                        :department,
+                                        :sector,
+                                        :ticket_status,
+                                        :ticket_type,
+                                        :employee
+                                        ]
+      else
+        render json: @tickets, include: [:company, 
+                                        :department,
+                                        :sector,
+                                        :ticket_status,
+                                        :ticket_type,
+                                        :employee
+                                        ]
+      end
+
     end
   
     # POST /tickets
@@ -34,30 +48,38 @@ module V1
     end
 
     def close
-      ActiveRecord::Base.transaction do 
-        @ticket.close
+      if current_user.admin? || current_user.master? || current_user.employee.id == current_user.employee.id
+        ActiveRecord::Base.transaction do 
+          @ticket.close
+        end
       end
     end
 
     def aprove
-      ActiveRecord::Base.transaction do
-        @ticket.aprove
-        @ticket.set_plan 
+      if current_user.admin?
+        ActiveRecord::Base.transaction do
+          @ticket.aprove
+          @ticket.set_plan 
+        end
       end
     end
   
     # PATCH/PUT /tickets/1
     def update
-      if @ticket.update(ticket_params)
-        render json: @ticket
-      else
-        render json: ErrorSerializer.serialize(@company.errors), status: :unprocessable_entity
+      if current_user.admin? || current_user.master?
+        if @ticket.update(ticket_params)
+          render json: @ticket
+        else
+          render json: ErrorSerializer.serialize(@company.errors), status: :unprocessable_entity
+        end
       end
     end
   
     # DELETE /tickets/1
     def destroy
-      @ticket.destroy
+      if current_user.admin?
+        @ticket.destroy
+      end
     end
   
     private
@@ -71,10 +93,14 @@ module V1
           @tickets = Company.find(params[:company_id]).tickets
           return @tickets
         end
+        if params[:employee_id]
+          @tickets = Employee.find(params[:employee_id]).tickets
+          return @tickets
+        end
         @tickets = Ticket.where(id: params[:id])
       end
       
-  
+
       # Only allow a trusted parameter "white list" through.
       def ticket_params
         ActiveModelSerializers::Deserialization

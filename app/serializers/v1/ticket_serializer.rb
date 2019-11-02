@@ -1,7 +1,7 @@
 module V1
   class TicketSerializer < ActiveModel::Serializer
     attributes :id, :title, :body, :conclude, :created, :updated, :author, :responsibles, :department_id, :sector_id,
-               :ticket_status_id, :ticket_type_id, :priority_id
+               :ticket_status_id, :ticket_type_id, :priority_id, :nivel, :status
 
     belongs_to :company
     belongs_to :department
@@ -15,20 +15,34 @@ module V1
       I18n.l object.created_at
     end
     
+    def status
+      if object.ticket_status.present?
+        object.ticket_status.status
+      end
+    end
+
     def updated
       I18n.l object.updated_at
     end
 
     def conclude
-      I18n.l object.conclude_at
+      if object.conclude_at.present?
+        I18n.l object.conclude_at
+      end
     end
 
     def nivel
-      object.priority.nivel || ''
+      if object.priority.present?
+        object.priority.nivel
+      end
     end
 
     def author
-      object.employee.name || ''
+      { 
+        name: object.employee.name,
+        email: object.employee.email,
+        id: object.employee.id
+      }
     end
 
     def responsibles
