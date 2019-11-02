@@ -26,7 +26,9 @@ module V1
     end
 
     def conclude
-      I18n.l object.conclude_at
+      if object.conclude_at.present?
+        I18n.l object.conclude_at
+      end
     end
 
     def nivel

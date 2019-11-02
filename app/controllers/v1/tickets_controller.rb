@@ -10,7 +10,6 @@ module V1
         @tickets = Ticket.all 
         render json: @tickets
       else
-        user_tickets
         render json: @tickets
       end
     end
@@ -26,7 +25,6 @@ module V1
                                         :employee
                                         ]
       else
-        user_ticket_show
         render json: @tickets, include: [:company, 
                                         :department,
                                         :sector,
@@ -50,7 +48,7 @@ module V1
     end
 
     def close
-      if current_user.admin? || current_user.master? || current_user.employee.eql?(@ticket.employee)
+      if current_user.admin? || current_user.master? || current_user.employee.id == current_user.employee.id
         ActiveRecord::Base.transaction do 
           @ticket.close
         end
@@ -102,28 +100,6 @@ module V1
         @tickets = Ticket.where(id: params[:id])
       end
       
-      def user_tickets
-        @t_resp = Ticket.where_responsible(current_user.employee)
-        @t_aut = Ticket.user_tickets(current_user)
-        @t_departments = Ticket.employee_department_tickets(current_user.employee)
-        @tickets = @t_resp.concat(@t_aut).concat(@t_departments)
-      end
-
-      def user_ticket_show
-        ticket_show = []
-        @tickets.each do |ticket|
-          if ticket.employees.include?(current_user.employee)
-            ticket_show.push(ticket)
-          elsif ticket.employee.eql?(current_user.employee)
-            ticket_show.push(ticket)
-          elsif ticket.department.present? && current_user.employee.department.present?
-            if ticket.department.eql?(current_user.employee.department)
-              ticket_show.push(ticket)
-            end
-          end 
-        end
-        @tickets = ticket_show
-      end
 
       # Only allow a trusted parameter "white list" through.
       def ticket_params
