@@ -246,12 +246,16 @@ namespace :dev do
 
       puts "Cadastrando Tickets..."
 
-      100.times do |i|
+      4.times do |i|
+        department = nil
+        company = Company.all.sample
+        department = company.departments.all.sample.id if company.departments.exists?
         Ticket.create!(
           title: Faker::Lorem.sentence(word_count: 3),
           body: Faker::Lorem.paragraph(sentence_count: 2),
           conclude_at: Faker::Date.birthday(min_age: 18, max_age: 65),
-          company_id: Company.all.sample.id,
+          company_id: company.id,
+          department_id: department,
           ticket_status_id: TicketStatus.all.sample.id,
           ticket_type_id: TicketType.all.sample.id,
           employee_id: Employee.all.sample.id,
@@ -266,12 +270,11 @@ namespace :dev do
       puts "Vinculando employees com tickets como responsavies"
 
       employees = Employee.select(:id).distinct
-      tickets = Ticket.select(:id).distinct
-
+      
       employees.each_with_index do |e, index|
         responsible = Responsible.create!(
           employee_id: e.id,
-          ticket_id: tickets[index].id
+          ticket_id: Ticket.all.sample.id
         )
       end
 
