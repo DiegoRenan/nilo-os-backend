@@ -8,9 +8,13 @@ module V1
     def index
       if current_user.admin? || current_user.master?
         @tickets = Ticket.all
+
+        filter_by_priority if params[:priority]
         render json: @tickets
       else
         @tickets = set_employee_tickets
+
+        filter_by_priority if params[:priority]
         render json: @tickets
       end
     end
@@ -106,6 +110,12 @@ module V1
               .where("responsibles.employee_id = ? OR tickets.employee_id = ? OR tickets.department_id = ?", 
                       current_user.employee.id, current_user.employee.id, current_user.employee.department.id)
               .distinct
+      end
+
+      def filter_by_priority
+        @tickets = @tickets.select do |t|
+          t.priority.nivel == params[:priority]
+        end
       end
       
 
