@@ -10,10 +10,12 @@ module V1
         @tickets = Ticket.all
 
         filter_by_priority if params[:priority]
+        filter_by_responsible if params[:responsible]
         render json: @tickets
       else
         @tickets = set_employee_tickets
 
+        filter_by_responsible if params[:responsible]
         filter_by_priority if params[:priority]
         render json: @tickets
       end
@@ -64,7 +66,7 @@ module V1
         if @ticket.update(ticket_params)
           render json: @ticket
         else
-          render json: ErrorSerializer.serialize(@company.errors), status: :unprocessable_entity
+          render json: ErrorSerializer.serialize(@ticket.errors), status: :unprocessable_entity
         end
       end
     end
@@ -114,8 +116,14 @@ module V1
 
       def filter_by_priority
         @tickets = @tickets.select do |t|
-          t.priority.nivel == params[:priority]
+          t.priority&.nivel == params[:priority]
         end
+      end
+
+      def filter_by_responsible
+        responsible = Responsible.joins(:employee)
+                                  .where(responsibles: {employee_id: current_user.employee.id})
+        @tickets = responsible.map { |t| t.ticket }
       end
       
 
@@ -123,7 +131,8 @@ module V1
       def ticket_params
         ActiveModelSerializers::Deserialization
           .jsonapi_parse(params, only: [:title, 
-                                        :body, 
+                                        :body,
+                                        :priority_id, 
                                         :conclude_at, 
                                         :company_id, 
                                         :department_id,

@@ -47,8 +47,8 @@ class Ticket < ApplicationRecord
   belongs_to :department, optional: true
   belongs_to :sector, optional: true
   belongs_to :employee
-  belongs_to :ticket_status
-  belongs_to :ticket_type
+  belongs_to :ticket_status, optional: true
+  belongs_to :ticket_type, optional: true
   belongs_to :priority, optional: true
   
 
