@@ -108,10 +108,15 @@ module V1
       end
 
       def set_employee_tickets
-        Ticket.joins(:responsibles)
-              .where("responsibles.employee_id = ? OR tickets.employee_id = ? OR tickets.department_id = ?", 
-                      current_user.employee.id, current_user.employee.id, current_user.employee.department.id)
-              .distinct
+        tickets = Ticket.joins(:responsibles)
+                  .where("responsibles.employee_id = ? OR tickets.employee_id = ? ", 
+                          current_user.employee.id, current_user.employee.id)
+                  .distinct
+        tickets = Ticket.where(employee_id: current_user.employee.id)
+        if current_user.employee&.department_id
+          tickets.concat(Ticket.where(department_id: current_user.department_id))
+        end
+        tickets
       end
 
       def filter_by_priority
