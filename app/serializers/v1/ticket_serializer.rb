@@ -16,9 +16,7 @@ module V1
     end
     
     def status
-      if object.ticket_status.present?
-        object.ticket_status.status
-      end
+      object.ticket_status&.status
     end
 
     def updated
@@ -32,9 +30,7 @@ module V1
     end
 
     def nivel
-      if object.priority.present?
-        object.priority.nivel
-      end
+      object.priority&.nivel
     end
 
     def author
@@ -46,12 +42,7 @@ module V1
     end
 
     def responsibles
-      if !object.nil?
-       responsibles = object.responsibles.map { |resp| resp.employee.name}
-       return responsibles
-      else
-        return []
-      end
+       responsibles = object&.responsibles.map { |resp| resp.employee.name}
     end
   
     def attributes(*args)
