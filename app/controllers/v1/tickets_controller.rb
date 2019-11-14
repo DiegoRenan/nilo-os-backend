@@ -7,7 +7,7 @@ module V1
     # GET /tickets
     def index
       if current_user.admin? || current_user.master?
-        @tickets = Ticket.all
+        @tickets = Ticket.all.order(updated_at: :asc)
 
         filter_by_priority if params[:priority]
         filter_by_responsible if params[:responsible]
@@ -15,8 +15,8 @@ module V1
       else
         @tickets = set_employee_tickets
 
-        filter_by_responsible if params[:responsible]
         filter_by_priority if params[:priority]
+        filter_by_responsible if params[:responsible]
         render json: @tickets
       end
     end
@@ -108,13 +108,16 @@ module V1
       end
 
       def set_employee_tickets
-        tickets = Ticket.joins(:responsibles)
+        tickets = current_user.employee.tickets || []
+        ticket_responsible = Ticket.joins(:responsibles)
                   .where("responsibles.employee_id = ? OR tickets.employee_id = ? ", 
                           current_user.employee.id, current_user.employee.id)
                   .distinct
-        tickets = Ticket.where(employee_id: current_user.employee.id)
+
+        tickets.concat(ticket_responsible)
+        
         if current_user.employee&.department_id
-          tickets.concat(Ticket.where(department_id: current_user.department_id))
+          tickets.concat(Ticket.where(department_id: current_user.employee&.department_id))
         end
         tickets
       end
