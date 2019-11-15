@@ -13,8 +13,8 @@ module V1
         filter_by_responsible if params[:responsible]
         render json: @tickets
       else
-        @tickets = set_employee_tickets
-
+        set_employee_tickets
+        
         filter_by_priority if params[:priority]
         filter_by_responsible if params[:responsible]
         render json: @tickets
@@ -104,22 +104,12 @@ module V1
           end
           @tickets = ticket_for_user  
         end
-
       end
 
       def set_employee_tickets
-        tickets = current_user.employee.tickets || []
-        ticket_responsible = Ticket.joins(:responsibles)
-                  .where("responsibles.employee_id = ? OR tickets.employee_id = ? ", 
-                          current_user.employee.id, current_user.employee.id)
-                  .distinct
-
-        tickets.concat(ticket_responsible)
-        
-        if current_user.employee&.department_id
-          tickets.concat(Ticket.where(department_id: current_user.employee&.department_id))
-        end
-        tickets
+        @tickets = 
+          Ticket.joins(:responsibles)
+                .where(responsibles: {employee_id: current_user.employee_id})
       end
 
       def filter_by_priority
@@ -134,7 +124,6 @@ module V1
         @tickets = responsible.map { |t| t.ticket }
       end
       
-
       # Only allow a trusted parameter "white list" through.
       def ticket_params
         ActiveModelSerializers::Deserialization
