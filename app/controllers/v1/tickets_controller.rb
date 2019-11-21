@@ -3,26 +3,21 @@ module V1
     before_action :set_ticket, only: [:update, :destroy, :close, :aprove]
     before_action :set_tickets, only: [:show]
     before_action :authenticate_user!
-  
     # GET /tickets
     def index
       if current_user.admin? || current_user.master?
-        @tickets = Ticket.all
-
-        filter_by_priority if params[:priority]
-        filter_by_responsible if params[:responsible]
-        render json: @tickets
+        order_by = params[:order].nil? ? 'updated_at' : params[:order]
+        @tickets = Ticket.all.order("#{order_by} ASC")
       else
-        @tickets = set_employee_tickets
-
-        filter_by_responsible if params[:responsible]
-        filter_by_priority if params[:priority]
-        render json: @tickets
+        set_employee_tickets
       end
+      filters
+      render json: @tickets
     end
   
     # GET /tickets/1
-    def show      
+    def show
+      filters
       render json: @tickets, include: [:company, 
                                         :department,
                                         :sector,
@@ -85,38 +80,27 @@ module V1
       end
       
       def set_tickets
+        order_by = params[:order].nil? ? 'updated_at' : params[:order]
+        puts order_by
         if params[:company_id]
           @tickets = Company.find(params[:company_id]).tickets
+          return
         end
         
         if params[:employee_id]
-          @tickets = Employee.find(params[:employee_id]).tickets
+          @tickets = Employee.find(params[:employee_id]).tickets.order("#{order_by} ASC")
+          return
         end
 
-        if params[:id]
-          @tickets = Ticket.where(id: params[:id])
-        end
-        
-        unless current_user.admin? || current_user.master?
-          ticket_for_user = []
-          @tickets.each do |ticket|
-           ticket_for_user.push(ticket) if set_employee_tickets.include?(ticket)
-          end
-          @tickets = ticket_for_user  
-        end
-
+        @tickets = Ticket.where(id: params[:id])       
       end
 
       def set_employee_tickets
-        tickets = Ticket.joins(:responsibles)
-                  .where("responsibles.employee_id = ? OR tickets.employee_id = ? ", 
-                          current_user.employee.id, current_user.employee.id)
-                  .distinct
-        tickets = Ticket.where(employee_id: current_user.employee.id)
-        if current_user.employee&.department_id
-          tickets.concat(Ticket.where(department_id: current_user.department_id))
-        end
-        tickets
+        order_by = params[:order].nil? ? 'updated_at' : params[:order]
+        @tickets = 
+          Ticket.left_outer_joins(:responsibles)
+                .where("tickets.employee_id = ? OR responsibles.employee_id = ?", current_user.employee_id, current_user.employee_id)
+                .order("#{order_by} ASC")
       end
 
       def filter_by_priority
@@ -126,12 +110,17 @@ module V1
       end
 
       def filter_by_responsible
-        responsible = Responsible.joins(:employee)
-                                  .where(responsibles: {employee_id: current_user.employee.id})
-        @tickets = responsible.map { |t| t.ticket }
+        order_by = params[:order].nil? ? 'updated_at' : params[:order]
+        @tickets = Ticket.joins(:responsibles)
+                                 .where(responsibles: {employee_id: current_user.employee.id})
+                                 .order("#{order_by} ASC")
+      end
+
+      def filters
+        filter_by_priority if params[:priority]
+        filter_by_responsible if params[:responsible]
       end
       
-
       # Only allow a trusted parameter "white list" through.
       def ticket_params
         ActiveModelSerializers::Deserialization
