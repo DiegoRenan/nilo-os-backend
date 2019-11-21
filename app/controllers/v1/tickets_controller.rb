@@ -7,7 +7,7 @@ module V1
     def index
       if current_user.admin? || current_user.master?
         order_by = params[:order].nil? ? 'updated_at' : params[:order]
-        @tickets = Ticket.all.order("#{order_by} ASC")
+        @tickets = Ticket.all.order("#{order_by} DESC")
       else
         set_employee_tickets
       end
@@ -88,7 +88,7 @@ module V1
         end
         
         if params[:employee_id]
-          @tickets = Employee.find(params[:employee_id]).tickets.order("#{order_by} ASC")
+          @tickets = Employee.find(params[:employee_id]).tickets.order("#{order_by} DESC")
           return
         end
 
@@ -100,7 +100,7 @@ module V1
         @tickets = 
           Ticket.left_outer_joins(:responsibles)
                 .where("tickets.employee_id = ? OR responsibles.employee_id = ?", current_user.employee_id, current_user.employee_id)
-                .order("#{order_by} ASC")
+                .order("#{order_by} DESC")
       end
 
       def filter_by_priority
@@ -113,7 +113,7 @@ module V1
         order_by = params[:order].nil? ? 'updated_at' : params[:order]
         @tickets = Ticket.joins(:responsibles)
                                  .where(responsibles: {employee_id: current_user.employee.id})
-                                 .order("#{order_by} ASC")
+                                 .order("#{order_by} DESC")
       end
 
       def filters
