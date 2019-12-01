@@ -18,31 +18,34 @@ module V1
 
     # POST v1/employees
     def create
-      @employee = Employee.new(employee_params)
+      begin
+        @employee = Employee.new(unserialized_params)
+        if @employee.save
+          if !params[:data][:attributes][:password].nil? && !params[:data][:attributes][:password_confirmation].nil?
+            password = params[:data][:attributes][:password]
+            password_confirmation = params[:data][:attributes][:password_confirmation]
+            master = params[:data][:attributes][:master]
+            
+            user = @employee.create_user!(email: @employee.email, password: password, password_confirmation: password_confirmation, master: master)
 
-      if @employee.save
-        
-        if !params[:data][:attributes][:password].nil? && !params[:data][:attributes][:password_confirmation].nil?
-          password = params[:data][:attributes][:password]
-          password_confirmation = params[:data][:attributes][:password_confirmation]
-          master = params[:data][:attributes][:master]
+            if !user.valid?
+              @employee.errors.add({:password =>["Não foi possível criar um login. Verifique as informações dadas"]})
+            end
           
-          user = @employee.create_user!(email: @employee.email, password: password, password_confirmation: password_confirmation, master: master)
-
-          if !user.valid?
-            @employee.errors.add({:password =>["Não foi possível criar um login. Verifique as informações dadas"]})
+            render json: @employee, status: :created
+          else
+            @employee.errors.add('Usuário', 'Criada sem login')
+            render json: ErrorSerializer.serialize(@employee.errors), status: :unprocessable_entity
           end
-        
-          render json: @employee, status: :created
+
         else
-          @employee.errors.add('Usuário', 'Criada sem login')
           render json: ErrorSerializer.serialize(@employee.errors), status: :unprocessable_entity
         end
-
-      else
-        render json: ErrorSerializer.serialize(@employee.errors), status: :unprocessable_entity
+      rescue Exception => e
+        puts e.message
+        error = {:server => ["Erro 500"]}
+        render json: ErrorSerializer.serialize(error), status: :internal_server_error
       end
-
     end
 
     # PATCH/PUT v1/companies/1
@@ -81,9 +84,18 @@ module V1
         @employees = Employee.where(id: params[:id])
       end
 
+      def avatar_params
+        ActiveModelSerializers::Deserialization.jsonapi_parse(params, only: [:avatar])
+      end
+
+      def unserialized_params
+        { email: params[:email], name: params[:name], cpf: params[:cpf], company_id: params[:companies], avatar: params[:avatar]}
+      end
       # Only allow a trusted parameter "white list" through.
       def employee_params
-        ActiveModelSerializers::Deserialization.jsonapi_parse(params, only: [:name,
+        ActiveModelSerializers::Deserialization.jsonapi_parse(params, only: [ 
+                                                                              :avatar,
+                                                                              :name,
                                                                               :cpf,
                                                                               :born,
                                                                               :email,
