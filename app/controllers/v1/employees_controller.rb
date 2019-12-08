@@ -21,10 +21,10 @@ module V1
       begin
         @employee = Employee.new(unserialized_params)
         if @employee.save
-          if !params[:password].nil? && !params[:password_confirmation].nil?
-            password = params[:password]
-            password_confirmation = params[:password_confirmation]
-            master = params[:master]
+          if !params[:data][:attributes][:password].nil? && !params[:data][:attributes][:password_confirmation].nil?
+            password = params[:data][:attributes][:password]
+            password_confirmation = params[:data][:attributes][:password_confirmation]
+            master = params[:data][:attributes][:master]
             
             user = @employee.create_user!(email: @employee.email, password: password, password_confirmation: password_confirmation, master: master)
 
@@ -42,6 +42,7 @@ module V1
           render json: ErrorSerializer.serialize(@employee.errors), status: :unprocessable_entity
         end
       rescue Exception => e
+        puts e.message
         error = {:server => ["Erro 500"]}
         render json: ErrorSerializer.serialize(error), status: :internal_server_error
       end
@@ -49,15 +50,10 @@ module V1
 
     # PATCH/PUT v1/companies/1
     def update
-      begin
-        if @employee.update(unserialized_params)
-          render json: @employee
-        else
-          render json: ErrorSerializer.serialize(@employee.errors), status: :unprocessable_entity
-        end
-      rescue Exception => e
-        error = {:server => ["Erro 500"]}
-        render json: ErrorSerializer.serialize(error), status: :internal_server_error
+      if @employee.update(employee_params)
+        render json: @employee
+      else
+        render json: ErrorSerializer.serialize(@employee.errors), status: :unprocessable_entity
       end
     end
 
@@ -88,21 +84,12 @@ module V1
         @employees = Employee.where(id: params[:id])
       end
 
+      def avatar_params
+        ActiveModelSerializers::Deserialization.jsonapi_parse(params, only: [:avatar])
+      end
+
       def unserialized_params
-        { email: params[:email], 
-          name: params[:name], 
-          cpf: params[:cpf],
-          born: params[:born], 
-          company_id: params[:company], 
-          department_id: params[:department],
-          sector_id: params[:sector],
-          cep: params[:cep],
-          street: params[:street],
-          number: params[:number],
-          district: params[:district],
-          city: params[:city],
-          uf: params[:uf],
-          avatar: params[:avatar]}
+        { email: params[:email], name: params[:name], cpf: params[:cpf], company_id: params[:companies], avatar: params[:avatar]}
       end
       # Only allow a trusted parameter "white list" through.
       def employee_params
@@ -120,7 +107,10 @@ module V1
                                                                               :cep,
                                                                               :company_id,
                                                                               :department_id,
-                                                                              :sector_id])
+                                                                              :sector_id,
+                                                                              :employee_id,
+                                                                              :ticket_status_id,
+                                                                              :ticket_type_id])
       end
 
   end  
