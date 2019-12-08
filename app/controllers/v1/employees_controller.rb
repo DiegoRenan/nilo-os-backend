@@ -47,7 +47,7 @@ module V1
       end
     end
 
-    # PATCH/PUT v1/companies/1
+    # PATCH/PUT v1/employees/1
     def update
       begin
         if @employee.update(unserialized_params)
@@ -61,6 +61,7 @@ module V1
       end
     end
 
+    # DELET v1/employees/1
     def destroy
       if @employee.tickets.exists? || @employee.responsibles.exists?
         @employee.errors.add('Colaborador', 'Possuí Tickets vinculados')
