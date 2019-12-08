@@ -1,6 +1,9 @@
 class EmployeeSerializer < ActiveModel::Serializer
   include Rails.application.routes.url_helpers
+    
+  attributes :id, :name, :email, :avatar, :born, :cpf, :cep, :street, :number, :district, :city, :uf
   
+
   attributes :id, 
   					 :name, 
   					 :email, 
