@@ -15,8 +15,11 @@ class EmployeeSerializer < ActiveModel::Serializer
   					 :uf,
              :master,
   					 :company_id,
+             :company_name,
   					 :department_id,
-  					 :sector_id
+             :department_name,
+  					 :sector_id,
+             :sector_name
   
   has_many :tickets
 
@@ -26,6 +29,18 @@ class EmployeeSerializer < ActiveModel::Serializer
 
   def master
     object.user.master?
+  end
+
+  def company_name
+    object.company.name
+  end
+
+  def department_name
+    object.department&.name
+  end
+
+  def sector_name
+    object.sector&.name
   end
   
 end
