@@ -1,6 +1,11 @@
 Rails.application.routes.draw do
   mount_devise_token_auth_for 'User', at: 'auth'
   #http://guides.rubyonrails.org/routing.html
+  if Rails.env.development?
+    scope format: true, constraints: { format: /jpg|png|gif|PNG/ } do
+      get '/*anything', to: proc { [404, {}, ['']] }, constraints: lambda { |request| !request.path_parameters[:anything].start_with?('rails/') }
+    end
+  end
   
   api_version(:module => "V1", :path => {:value => "v1"}) do
     resources :companies do
