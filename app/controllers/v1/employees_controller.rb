@@ -18,42 +18,50 @@ module V1
 
     # POST v1/employees
     def create
-      @employee = Employee.new(employee_params)
+      begin
+        @employee = Employee.new(unserialized_params)
+        if @employee.save
+          if !params[:password].nil? && !params[:password_confirmation].nil?
+            password = params[:password]
+            password_confirmation = params[:password_confirmation]
+            master = params[:master]
+            
+            user = @employee.create_user!(email: @employee.email, password: password, password_confirmation: password_confirmation, master: master)
 
-      if @employee.save
-        
-        if !params[:data][:attributes][:password].nil? && !params[:data][:attributes][:password_confirmation].nil?
-          password = params[:data][:attributes][:password]
-          password_confirmation = params[:data][:attributes][:password_confirmation]
-          master = params[:data][:attributes][:master]
+            if !user.valid?
+              @employee.errors.add({:password =>["Não foi possível criar um login. Verifique as informações dadas"]})
+            end
           
-          user = @employee.create_user!(email: @employee.email, password: password, password_confirmation: password_confirmation, master: master)
-
-          if !user.valid?
-            @employee.errors.add({:password =>["Não foi possível criar um login. Verifique as informações dadas"]})
+            render json: @employee, status: :created
+          else
+            @employee.errors.add('Usuário', 'Criada sem login')
+            render json: ErrorSerializer.serialize(@employee.errors), status: :unprocessable_entity
           end
-        
-          render json: @employee, status: :created
+
         else
-          @employee.errors.add('Usuário', 'Criada sem login')
           render json: ErrorSerializer.serialize(@employee.errors), status: :unprocessable_entity
         end
-
-      else
-        render json: ErrorSerializer.serialize(@employee.errors), status: :unprocessable_entity
+      rescue Exception => e
+        error = {:server => ["Erro 500"]}
+        render json: ErrorSerializer.serialize(error), status: :internal_server_error
       end
-
     end
 
-    # PATCH/PUT v1/companies/1
+    # PATCH/PUT v1/employees/1
     def update
-      if @employee.update(employee_params)
-        render json: @employee
-      else
-        render json: ErrorSerializer.serialize(@employee.errors), status: :unprocessable_entity
+      begin
+        if @employee.update(unserialized_params)
+          render json: @employee
+        else
+          render json: ErrorSerializer.serialize(@employee.errors), status: :unprocessable_entity
+        end
+      rescue Exception => e
+        error = {:server => ["Erro 500"]}
+        render json: ErrorSerializer.serialize(error), status: :internal_server_error
       end
     end
 
+    # DELET v1/employees/1
     def destroy
       if @employee.tickets.exists? || @employee.responsibles.exists?
         @employee.errors.add('Colaborador', 'Possuí Tickets vinculados')
@@ -81,9 +89,27 @@ module V1
         @employees = Employee.where(id: params[:id])
       end
 
+      def unserialized_params
+        { email: params[:email], 
+          name: params[:name], 
+          cpf: params[:cpf],
+          born: params[:born], 
+          company_id: params[:company], 
+          department_id: params[:department],
+          sector_id: params[:sector],
+          cep: params[:cep],
+          street: params[:street],
+          number: params[:number],
+          district: params[:district],
+          city: params[:city],
+          uf: params[:uf],
+          avatar: params[:avatar]}
+      end
       # Only allow a trusted parameter "white list" through.
       def employee_params
-        ActiveModelSerializers::Deserialization.jsonapi_parse(params, only: [:name,
+        ActiveModelSerializers::Deserialization.jsonapi_parse(params, only: [ 
+                                                                              :avatar,
+                                                                              :name,
                                                                               :cpf,
                                                                               :born,
                                                                               :email,
@@ -95,10 +121,7 @@ module V1
                                                                               :cep,
                                                                               :company_id,
                                                                               :department_id,
-                                                                              :sector_id,
-                                                                              :employee_id,
-                                                                              :ticket_status_id,
-                                                                              :ticket_type_id])
+                                                                              :sector_id])
       end
 
   end  

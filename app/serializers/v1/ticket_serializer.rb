@@ -1,7 +1,22 @@
 module V1
   class TicketSerializer < ActiveModel::Serializer
-    attributes :id, :title, :body, :conclude, :created, :updated, :author, :responsibles, :department_id, :sector_id,
-               :ticket_status_id, :ticket_type_id, :priority_id, :nivel, :status
+    attributes :id, 
+               :title, 
+               :body, 
+               :created, 
+               :conclude,
+               :concludef, 
+               :updated, 
+               :author, 
+               :responsibles,
+               :company_id, 
+               :department_id, 
+               :sector_id,
+               :ticket_status_id, 
+               :ticket_type_id, 
+               :priority_id, 
+               :nivel, 
+               :status
 
     belongs_to :company
     belongs_to :department
@@ -15,18 +30,20 @@ module V1
       I18n.l object.created_at
     end
     
+    def conclude
+     object.conclude_at&.strftime("%Y-%m-%d")
+    end
+
+    def concludef
+      object.conclude_at&.strftime("%d/%m/%Y")
+    end
+
     def status
       object.ticket_status&.status
     end
 
     def updated
       I18n.l object.updated_at
-    end
-
-    def conclude
-      if object.conclude_at.present?
-        I18n.l object.conclude_at
-      end
     end
 
     def nivel
