@@ -24,6 +24,7 @@ Rails.application.routes.draw do
     post '/aprove_ticket', to: 'tickets#aprove'
 
     resources :employees do
+      get '/change_master_value', to: 'employees#change_master_value'
       resources :avatar, only: [:show, :create] 
       resource :company, only: [:show]
       resource :comments, only: [:show]

@@ -58,4 +58,10 @@ class User < ActiveRecord::Base
 
   #validations
   validates :email, presence: true, uniqueness: true
+
+  def change_master_value!
+    ActiveRecord::Base.transaction do 
+     master ? update_attribute(:master, false) : update_attribute(:master, true)
+    end
+  end
 end

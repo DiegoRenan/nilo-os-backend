@@ -1,6 +1,6 @@
 module V1
   class EmployeesController < ApplicationController
-    before_action :set_employee, only: [:update, :destroy]
+    before_action :set_employee, only: [:update, :destroy, :change_master_value]
     before_action :set_employees, only: [:show]
     before_action :authenticate_user!
     
@@ -71,10 +71,16 @@ module V1
       end
     end
 
+    def change_master_value
+      @employee.user.change_master_value! if current_user.admin?
+    end
+
     private
       def set_employee
         if Employee.exists?(params[:id])
           @employee = Employee.find(params[:id])
+        elsif Employee.exists?(params[:employee_id])
+          @employee = Employee.find(params[:employee_id])
         else
           error = {:id=>["Não encontrado Funcionário com o id: #{params[:id]}"]}
           render json: ErrorSerializer.serialize(error), status: :unprocessable_entity
