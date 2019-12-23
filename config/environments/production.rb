@@ -5,7 +5,7 @@ Rails.application.configure do
   config.cache_classes = true
 
   Rails.application.routes.default_url_options = {
-    host: 'http://171.23.191.191:3000',
+    host: '177.23.191.191',
     port: 3000
   }
 
